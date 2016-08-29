@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Hibernate, Relational Persistence for Idiomatic Java
+  ~
+  ~ License: GNU Lesser General Public License (LGPL), version 2.1 or later.
+  ~ See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
+  -->
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <!-- Database connection settings -->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost/rv_test</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">admin123</property>
+
+        <!-- JDBC connection pool (use the built-in) -->
+        <property name="connection.pool_size">15</property>
+
+        <!-- SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+
+        <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+  
+         <!-- For Batch Insert -->
+        <property name="hibernate.jdbc.batch_size">50</property>
+		<property name="hibernate.order_inserts">true</property>
+		<property name="hibernate.order_updates">true</property>
+		<property name="hibernate.jdbc.batch_versioned_data">true</property>
+
+  
+        <!-- Drop and re-create the database schema on startup -->
+        <property name="hbm2ddl.auto">update</property>
+
+        <!-- Names the annotated entity class -->
+        <mapping class="controller.nav_hist"/>
+        <mapping class="controller.nav_report"/>
+        <mapping class="controller.nav_report_temp_1"/>
+        <mapping class="controller.nav_report_3_stable"/> 
+        <mapping class="controller.Avg_ret_Model"/>
+        <mapping class="controller.Qtr_Avg"/>  
+        <mapping class="controller.Report_5_Model"/>
+        <mapping class="controller.Report_6_Model"/> 
+        <mapping class="controller.Max_Drawdown_Model"/>  
+        <mapping class="controller.Calma_Ratio_Model"/>
+        <mapping class="controller.ExpenceRatio"/> 
+        <mapping class="controller.Average_Maturity"/>  
+        <mapping class="controller.Scheme_Aum"/>
+        <mapping class="controller.Report_7_Model"/>
+        <mapping class="controller.Mf_portfolio_Model"/>  
+        <mapping class="controller.Stock_rank_db"/>  
+        <mapping class="controller.Report_8_Model"/>  
+        <mapping class="controller.test_Controller"/> 
+        <mapping class="controller.Report_Merged_5_6_8_Model"/>   
+        <mapping class="controller.Schemeisin_Model"/>  
+        <mapping class="controller.Custom_Merged_Report_W_Rank"/>    
+        <mapping class="controller.Report_10_Model"/>  
+        <mapping class="controller.Report_11_Standard_Dev"/>  
+        <mapping class="controller.Report_12_Model"/>
+    </session-factory>
+</hibernate-configuration>
