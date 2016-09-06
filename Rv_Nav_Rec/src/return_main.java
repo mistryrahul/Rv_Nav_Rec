@@ -92,8 +92,8 @@ public class return_main {
 		  ArrayList<String> date_lst = new ArrayList<String>();
 		  nav_hist tmp_obj=null;
 		  Session ssn=null;
-		  int ret_lst_mnths[] = {-6,-12,-18,-24,-30,-36,-42,-48,-54,-60,9,12,18,24}; // list of month interval for which data need to be calculated
-//		  int ret_lst_mnths[] = {9}; // list of month interval for which data need to be calculated
+		  int ret_lst_mnths[] = {-3,-6,-12,-18,-24,-30,-36,-42,-48,-54,-60,9,12,18,24}; // list of month interval for which data need to be calculated
+//		  int ret_lst_mnths[] = {-3}; // list of month interval for which data need to be calculated
 		  int db_flag=0;
 		  
 	  	try
@@ -141,7 +141,7 @@ public class return_main {
 //		  				   System.out.println("Date--->"+b.getScheme_code());
 		  				   
 		  				   obj = new nav_report_3_stable();
-		  				   double res = ((tmp_obj.getAdjnavrs() - b.getAdjnavrs())/ b.getAdjnavrs());
+		  				   double res = (((tmp_obj.getAdjnavrs() - b.getAdjnavrs())/ b.getAdjnavrs())*100);
 		  				   obj.setComment(Integer.toString(mnths));
 		  				   obj.setNav_date(b.getNav_date());
 		  				   obj.setNav_from_date(tmp_obj.getNav_date());
@@ -170,7 +170,7 @@ public class return_main {
 //		  				   System.out.println("Date--->"+b.getScheme_code());
 		  				   
 		  				   obj = new nav_report_3_stable();
-		  				   double res = ((b.getAdjnavrs() - tmp_obj.getAdjnavrs())/ tmp_obj.getAdjnavrs());
+		  				   double res = (((b.getAdjnavrs() - tmp_obj.getAdjnavrs())/ tmp_obj.getAdjnavrs())*100);
 		  				   obj.setComment(Integer.toString(mnths));
 		  				   obj.setNav_date(b.getNav_date());
 		  				   obj.setNav_from_date(tmp_obj.getNav_date());
@@ -188,13 +188,13 @@ public class return_main {
 		  				
 		  			  }
 		  			  
-		  			 if(db_flag%500==0)
+		  			 if(db_flag%50==0)
 			  		 {
 			  		      
 			  		      ssn.flush();
 					      ssn.clear();
-					      ssn.getTransaction().commit();
-					      ssn.beginTransaction();
+//					      ssn.getTransaction().commit();
+//					      ssn.beginTransaction();
 					      db_flag=0;
 			  		 }
 		  			    

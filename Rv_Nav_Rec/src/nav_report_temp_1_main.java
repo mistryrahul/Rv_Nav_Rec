@@ -84,7 +84,11 @@ public class nav_report_temp_1_main
 		
     	for(nav_report_3_stable ob : fin_lst)
     	{
-    		    		
+    		 
+    		if(Integer.parseInt(ob.getComment())==-3 )
+    		{
+    		   	ob_ts.setRet_mnth_3(ob.getNav_value());
+    		}
     		if(Integer.parseInt(ob.getComment())==-6 )
     		{
     		   	ob_ts.setRet_mnth_6(ob.getNav_value());
@@ -258,7 +262,7 @@ public class nav_report_temp_1_main
  		coment_list = criteria_1.list(); 
 
 		int col_val=0;
-		String[] col_lst ={"ret_mnth_6","ret_mnth_12","ret_mnth_9_forwd","ret_mnth_12_forwd","ret_mnth_18","ret_mnth_18_forwd","ret_mnth_24","ret_mnth_30","ret_mnth_36","ret_mnth_42","ret_mnth_48","ret_mnth_54","ret_mnth_60"};
+		String[] col_lst ={"ret_mnth_3","ret_mnth_6","ret_mnth_12","ret_mnth_9_forwd","ret_mnth_12_forwd","ret_mnth_18","ret_mnth_18_forwd","ret_mnth_24","ret_mnth_30","ret_mnth_36","ret_mnth_42","ret_mnth_48","ret_mnth_54","ret_mnth_60"};
 		
 		for(String cmnt : coment_list)
 		{  
@@ -282,7 +286,30 @@ public class nav_report_temp_1_main
    		 		       for(nav_report_temp_1 t1 : n_r_t)
    		 		       {
 
-   		 		    	   
+   		 		    	 if(colmn.equals("ret_mnth_3") || colmn=="ret_mnth_3")
+	      		 		    {
+	   	   		 		        retval = Double.compare(tmp_val,t1.getRet_mnth_6());  		 		        	   	   		 		        
+			   	   		 		
+	   	   		 		        if(retval==0)
+	   	   		 		        {
+	   	   		 		        	 t1.setRet_mnth_3_rank(rank_tmp-1);
+	   	   		 		        	 ssn.update(t1);
+	   	   		 		             db_flag++;
+	   	   		 		        	
+	   	   		 		        }
+	   	   		 		        else
+	   	   		 		        {
+	   	   		 		             t1.setRet_mnth_3_rank(rank_tmp);
+	   		 		        	     ssn.update(t1);
+	   		 		        	     db_flag++;     	
+	   	   		 		        }
+	   	   		 		        
+	   	   		 		        
+	   	   		 		        tmp_val=t1.getRet_mnth_3();
+			   	   		 	    rank_tmp++;
+			   	   		 	    
+	      		 		    }
+   		 		    	 
 	   	   		 		   if(colmn.equals("ret_mnth_6") || colmn=="ret_mnth_6")
 	      		 		    {
 	   	   		 		        retval = Double.compare(tmp_val,t1.getRet_mnth_6());  		 		        	   	   		 		        

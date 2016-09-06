@@ -104,7 +104,7 @@ public class Report_10_Main {
 				    	  }
 				    	  
 				    	  last_50_days_avg_nav = (last_50_days_total/50);
-				    	  last_50_days_avg_prcnt = ((current_nav_obj.getAdjnavrs() - last_50_days_avg_nav)/last_50_days_avg_nav);
+				    	  last_50_days_avg_prcnt = (((current_nav_obj.getAdjnavrs() - last_50_days_avg_nav)/last_50_days_avg_nav)*100);
 				    	  
 				    	  rtm.setLast_50_days_avg(last_50_days_avg_nav);
 				    	  rtm.setLast_50_day_return(last_50_days_avg_prcnt);
@@ -129,7 +129,7 @@ public class Report_10_Main {
 					    	  }
 					    	  
 					    	  last_200_days_avg_nav = (last_200_days_total/200);
-					    	  last_200_days_avg_prcnt = ((current_nav_obj.getAdjnavrs() - last_200_days_avg_nav)/last_200_days_avg_nav);
+					    	  last_200_days_avg_prcnt = (((current_nav_obj.getAdjnavrs() - last_200_days_avg_nav)/last_200_days_avg_nav)*100);
 					    	  
 					    	  rtm.setLast_200_days_avg(last_200_days_avg_nav);
 					    	  rtm.setLast_200_day_return(last_200_days_avg_prcnt);

@@ -253,7 +253,7 @@ public class avg_return_2_main {
 //		
 //		System.out.println("<<----------------in SAVE Method END--------------->>");
 		
-		double res = ((Ob2.getAdjnavrs() - Ob1.getAdjnavrs()) / Ob1.getAdjnavrs());
+		double res = (((Ob2.getAdjnavrs() - Ob1.getAdjnavrs()) / Ob1.getAdjnavrs())*100);
 		
 		
 		Avg_ret_Model tmp_ob = new Avg_ret_Model();

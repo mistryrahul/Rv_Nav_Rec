@@ -15,6 +15,9 @@ public class nav_report_temp_1
 	@EmbeddedId
 	private composite_pk key;
 	   
+	double ret_mnth_3;
+	double ret_mnth_3_rank;
+	
 	double ret_mnth_6;
 	double ret_mnth_6_rank;
 	double ret_mnth_12;
@@ -52,6 +55,20 @@ public class nav_report_temp_1
 	String coment;
 	
 	
+	
+	
+	public double getRet_mnth_3() {
+		return ret_mnth_3;
+	}
+	public void setRet_mnth_3(double ret_mnth_3) {
+		this.ret_mnth_3 = ret_mnth_3;
+	}
+	public double getRet_mnth_3_rank() {
+		return ret_mnth_3_rank;
+	}
+	public void setRet_mnth_3_rank(double ret_mnth_3_rank) {
+		this.ret_mnth_3_rank = ret_mnth_3_rank;
+	}
 	public double getRet_mnth_9_forwd_rank() {
 		return ret_mnth_9_forwd_rank;
 	}

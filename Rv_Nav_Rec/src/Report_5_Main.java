@@ -169,7 +169,7 @@ public class Report_5_Main {
  		  		        	        	    	if(prob_date_lst.size()>=1)
  		  		        	        	    	{ 		  		        	        	    		 
 // 		  		        	        	    		 	 		  		        	        	    	
- 		  		        	        	    	 double res = ( ( Prev_Tmp_Obj.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs() )/ prob_date_lst.get(0).getAdjnavrs() );
+ 		  		        	        	    	 double res = (( ( Prev_Tmp_Obj.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs() )/ prob_date_lst.get(0).getAdjnavrs() )*100);
  		  		        	        	    		
  		  		        	        	    		  rm5.setYear_1(res);
  		  		        	        	    		  
@@ -206,7 +206,7 @@ public class Report_5_Main {
  	 		  	                                     {
 // 	 		  	                                    	double res = ( ( prob_date_lst.get(0).getAdjnavrs()-Prev_Tmp_Obj_1.getAdjnavrs() )/Prev_Tmp_Obj_1.getAdjnavrs() );
  	 		  	                                      
- 	 		  	                                    	double res = ( (Prev_Tmp_Obj_1.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs())/prob_date_lst.get(0).getAdjnavrs());	 
+ 	 		  	                                    	double res =( ( (Prev_Tmp_Obj_1.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs())/prob_date_lst.get(0).getAdjnavrs())*100);	 
  	 		  	                                    	 
  	 		  	                                        rm5.setYear_1_1(res);
  	 		  	                                       
@@ -246,7 +246,7 @@ public class Report_5_Main {
  	 		  	                                     {
 // 	 		  	                                    	double res = ( ( prob_date_lst.get(0).getAdjnavrs()-Prev_Tmp_Obj_2.getAdjnavrs() )/Prev_Tmp_Obj_2.getAdjnavrs() );
  	 		  	                                    	
- 	 		  	                                    	double res = ( (Prev_Tmp_Obj_2.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs())/prob_date_lst.get(0).getAdjnavrs());
+ 	 		  	                                    	double res = (( (Prev_Tmp_Obj_2.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs())/prob_date_lst.get(0).getAdjnavrs())*100);
  	 		  	                                       rm5.setYear_1_2(res);
  	 		  	                                       
  	 		  	                                       Prev_Tmp_Obj_3 = prob_date_lst.get(0);
@@ -286,7 +286,7 @@ public class Report_5_Main {
  	 		  	                                     {
  	 		  	                                    //double res = ( ( prob_date_lst.get(0).getAdjnavrs()-Prev_Tmp_Obj_3.getAdjnavrs() )/Prev_Tmp_Obj_3.getAdjnavrs() );
  	 		  	                                   
- 	 		  	                                    	double res = ( (Prev_Tmp_Obj_3.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs())/prob_date_lst.get(0).getAdjnavrs()); 	 
+ 	 		  	                                    	double res = (( (Prev_Tmp_Obj_3.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs())/prob_date_lst.get(0).getAdjnavrs())*100); 	 
  	 		  	                                    	 
  	 		  	                                        rm5.setYear_1_3(res);
  	 		  	                                       
@@ -296,7 +296,7 @@ public class Report_5_Main {
  	 		  	                                        
  	 		  	                                        
  	 		  	                                        
-// 	 		  	                                      System.out.println("<<<<<<<<<<<---Year-1-3-->>>>>>>>>>>>>>>");
+// 	 		  	                                       System.out.println("<<<<<<<<<<<---Year-1-3-->>>>>>>>>>>>>>>");
 //													
 //	 		  	                                       System.out.println("Return Calculated--- Successfully");
 //	 		  	                                       System.out.println("Date---------->"+Prev_Tmp_Obj_3.getNav_date());
@@ -349,7 +349,7 @@ public class Report_5_Main {
  	 		  	                                    	 
  	 		  	                                   
 // 	 		  	                                   	double res = ( ( prob_date_lst.get(0).getAdjnavrs()-Prev_Tmp_Obj_4.getAdjnavrs() )/Prev_Tmp_Obj_4.getAdjnavrs() );
- 	 		  	                                       double res = ( ( Prev_Tmp_Obj_4.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs() ) /prob_date_lst.get(0).getAdjnavrs()); 	
+ 	 		  	                                       double res = (( ( Prev_Tmp_Obj_4.getAdjnavrs() - prob_date_lst.get(0).getAdjnavrs() ) /prob_date_lst.get(0).getAdjnavrs())*100); 	
  	 		  	                                       
  	 		  	                                       rm5.setYear_1_4(res);
  	 		  	                                       
@@ -401,7 +401,7 @@ public class Report_5_Main {
 //		  		        	        	    		 currDt_tmp=prob_date_lst.get(0).getNav_date();
 	 		  		        	        	   	// prob_date_lst.get(0).getAdjnavrs(); //Adjusted NAVRs
 		  		        	        	
-		  		        	        	   double res = ( ( prob_date_lst.get(0).getAdjnavrs()-Prev_Tmp_Obj.getAdjnavrs() )/Prev_Tmp_Obj.getAdjnavrs() );
+		  		        	        	   double res = (( ( prob_date_lst.get(0).getAdjnavrs()-Prev_Tmp_Obj.getAdjnavrs() )/Prev_Tmp_Obj.getAdjnavrs() )*100);
 		  		        	        	    		 
 		  		        	        	    		 
 		  		        	        	    		 
@@ -427,7 +427,6 @@ public class Report_5_Main {
 
  		  		  	        	 if(db_flag%200==0)
  		  		  	        	 {
- 		  		  	        		 
  		  		  	        		 ssn.flush();
  		  		  	        		 ssn.clear();
  		  		  	        	     ssn.getTransaction().commit();
