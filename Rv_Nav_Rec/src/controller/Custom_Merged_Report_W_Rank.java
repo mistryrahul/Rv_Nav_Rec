@@ -13,8 +13,7 @@ public class Custom_Merged_Report_W_Rank
 	   String quarter;
 	   
 	  // nav_report_final;
-	   
-	   
+	   	   
 	   double forwar_9_mnths;
 	   int R_forwar_9_mnths;
 	   double forwar_12_mnths;
@@ -22,6 +21,9 @@ public class Custom_Merged_Report_W_Rank
 	   double forwar_18_mnths;
 	   int R_forwar_18_mnths;
 	   // nav_report_final;
+	   
+	   double backward_3;
+	   
 	   double backward_6;
 	   int R_backward_6;
 	   
@@ -135,7 +137,10 @@ public class Custom_Merged_Report_W_Rank
 	   double last_200_day_return;
 	   int R_last_200_day_return;
 	   
+   // new addition
 	   
+	   double ex_ratio;
+	   double sc_aum;
 	   
 	   
 	public int getR_avg_return_50_minus_200() {
@@ -593,6 +598,26 @@ public class Custom_Merged_Report_W_Rank
 	}
 	public void setR_max_Drawdown_year_5(int r_max_Drawdown_year_5) {
 		R_max_Drawdown_year_5 = r_max_Drawdown_year_5;
+	}
+	public double getBackward_3() {
+		return backward_3;
+	}
+	public void setBackward_3(double backward_3) {
+		this.backward_3 = backward_3;
+	}
+	public double getEx_ratio() {
+		return ex_ratio;
+	}
+	public void setEx_ratio(double ex_ratio) {
+		this.ex_ratio = ex_ratio;
+	}
+	public double getSc_aum() {
+		return sc_aum;
+	}
+	public void setSc_aum(double sc_aum) {
+		this.sc_aum = sc_aum;
 	}  
-	   
+	
+	
+	
 }

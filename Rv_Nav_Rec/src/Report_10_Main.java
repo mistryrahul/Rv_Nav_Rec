@@ -32,6 +32,7 @@ public class Report_10_Main {
 		nav_hist current_nav_obj=null;
 		long temp_50_id=0;
 		long temp_200_id=0;
+		
 		double last_50_days_avg_nav=0;
 		double last_50_days_total=0;
 		double last_200_days_avg_nav=0;
@@ -39,6 +40,7 @@ public class Report_10_Main {
 		double last_50_days_avg_prcnt=0;
 		double last_200_days_avg_prcnt=0;
 		double total_avg_50_200_days=0;
+		
 		int no_of_obs_50=0;
 		int no_of_obs_200=0;
 		int db_save=0;
@@ -134,7 +136,7 @@ public class Report_10_Main {
 					    	  rtm.setLast_200_days_avg(last_200_days_avg_nav);
 					    	  rtm.setLast_200_day_return(last_200_days_avg_prcnt);
 					    	  
-					    	  total_avg_50_200_days = ((last_50_days_avg_nav - last_200_days_avg_nav)/ last_200_days_avg_nav);
+					    	  total_avg_50_200_days = (((last_50_days_avg_nav - last_200_days_avg_nav)/ last_200_days_avg_nav)*100);
 					    	  rtm.setAvg_return_50_minus_200(total_avg_50_200_days);	 
 					    	  
 			    	   }
@@ -160,12 +162,10 @@ public class Report_10_Main {
 			    	  db_save++;
 			    	  
 			    	  if(db_save%5==0)
-	   		 		    {
-	   		 		    	ssn.getTransaction().commit();
+	   		 		    {  	ssn.getTransaction().commit();
 	   		 		        ssn.beginTransaction();
 	   		 		        ssn.flush();
 					        ssn.clear();
-	   		 		    	
 	   		 		    	db_save=0;
 	   		 		    }
 			    	  
@@ -178,12 +178,9 @@ public class Report_10_Main {
 			     ssn.getTransaction().commit();
 			     ssn.close();
 			     
-			     System.out.println("------Report Complete----");
-			   
+			     System.out.println("<------Report Complete---->");
 			   
 		
-			   
-			   
 			   
 		   }
 		   catch(Exception e)

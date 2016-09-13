@@ -95,7 +95,7 @@ public class Stock_rank_db_Uploader_Main {
 				    	   {
 				    		 if( DateUtil.isCellDateFormatted(cell))
 				    		  {
-//				    			  System.out.println("\t"+cell.getDateCellValue()+"\t");
+				    			  System.out.println("\t"+cell.getDateCellValue()+"\t");
 				    			  dd = cell.getDateCellValue();
 				    			  System.out.println("\t"+dd+"\t");
 				    			  date_lst.add(dd);

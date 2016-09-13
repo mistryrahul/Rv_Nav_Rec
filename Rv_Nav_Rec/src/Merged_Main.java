@@ -13,12 +13,14 @@ import org.hibernate.criterion.Restrictions;
 
 import controller.Avg_ret_Model;
 import controller.Calma_Ratio_Model;
+import controller.ExpenceRatio;
 import controller.Report_10_Model;
 import controller.Report_5_Model;
 import controller.Report_6_Model;
 import controller.Report_6_pk;
 import controller.Report_8_Model;
 import controller.Report_Merged_5_6_8_Model;
+import controller.Scheme_Aum;
 import controller.nav_hist;
 import controller.nav_report_temp_1;
 
@@ -74,6 +76,7 @@ public class Merged_Main {
 						   
 						   rm568.setForwar_9_mnths(nav_rem_tmp_lst.get(0).getRet_mnth_9_forwd());
 						   
+						   rm568.setBackward_3(nav_rem_tmp_lst.get(0).getRet_mnth_3());
 						   rm568.setBackward_6(nav_rem_tmp_lst.get(0).getRet_mnth_6());
 						   
 						   rm568.setBackward_12(nav_rem_tmp_lst.get(0).getRet_mnth_12());
@@ -218,6 +221,25 @@ public class Merged_Main {
 						   }
 						    
 			
+						   
+	// Newly added
+						    
+						   
+						
+				    ArrayList<ExpenceRatio> ex_r_obj = (ArrayList<ExpenceRatio>) ssn.createQuery("from ExpenceRatio where scheme_code=? and day=?").setLong(0,arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt()).list();
+				    
+				    if(ex_r_obj.size()>0)
+				    {
+				    	rm568.setEx_ratio(ex_r_obj.get(0).getEx_ratio());
+				    }
+						   
+				      
+				    ArrayList<Scheme_Aum> sc_aum_obj = (ArrayList<Scheme_Aum>) ssn.createQuery("from Scheme_Aum where scheme_code=? and day=?").setLong(0,arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt()).list(); 
+						   
+				    if(sc_aum_obj.size()>0)
+				    {
+				    	rm568.setSc_aum(sc_aum_obj.get(0).getExfof());
+				    }
 					   
 					   ssn.save(rm568);
 					   i++;

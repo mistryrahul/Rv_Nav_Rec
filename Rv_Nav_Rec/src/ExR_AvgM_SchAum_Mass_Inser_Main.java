@@ -1,5 +1,6 @@
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,19 +9,16 @@ import org.apache.commons.io.LineIterator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import controller.*;
 
-import controller.nav_hist;
+import controller.Scheme_Aum;
 
-
-public class ExpR_AvgM_ScA_Insert_Main {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) 
-	{
-		double no_of_lines;
+public class ExR_AvgM_SchAum_Mass_Inser_Main 
+{
+    public static void main(String[] args)
+    {
+    	int c=0; // temp var in main loop 
+    	double no_of_lines;
+		String tmp_val;
 		String scheme_cd="", dt="", amc_cd="" , ex_ratio=""; 
 		final Pattern pattern = Pattern.compile("<<row>>(.+?)<</row>>");
 		Matcher matcher;
@@ -29,9 +27,16 @@ public class ExpR_AvgM_ScA_Insert_Main {
 		Session ssn = null;
 		try
 		{   
+			
+			for( c=149;c>=1;c--)   // main loop( loop size vary table to table)
+			{
+				
+	
+			
+			
 
 //			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/EXPENCERATIO.ace"), "UTF-8");
-			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_aum.ace"), "UTF-8");
+			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/DB_Upload/aum/scheme_aum ("+c+").txt"), "UTF-8");
 			
 //			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/SchemeISINMaster.ace"), "UTF-8");
 			SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
@@ -41,9 +46,15 @@ public class ExpR_AvgM_ScA_Insert_Main {
 			
 			while (it.hasNext()) // if the file has lines 
      	    {
+				tmp_val=it.nextLine();
 
 				
-				matcher = pattern.matcher(it.nextLine());
+				if(tmp_val.equals("<<eof>>"))
+				{
+					break;
+				}
+				
+				matcher = pattern.matcher(tmp_val);
 				matcher.find();
 				String[] separated = matcher.group(1).split("\\|");
 						
@@ -187,7 +198,39 @@ public class ExpR_AvgM_ScA_Insert_Main {
 				}
 				
 				
-				ssn.save(sa);
+				
+				ArrayList<Scheme_Aum> schme_lst = (ArrayList<Scheme_Aum>) ssn.createQuery("from Scheme_Aum where scheme_code=? and day=?").setLong(0,sa.getScheme_code() ).setDate(1, sa.getDay()).list();
+				
+				System.out.println("LIST SIZE_____----->>>"+schme_lst.size());
+				
+				if(schme_lst.size()>0)
+				{
+					 System.out.println("Prev exFOF-->>"+schme_lst.get(0).getExfof());
+					 System.out.println("New FOF--->>"+sa.getExfof());
+					 
+					 System.out.println("COMpare-->>"+(schme_lst.get(0).getExfof()!=0));
+					 
+					 
+					if(schme_lst.get(0).getExfof()!=0)
+					{
+						System.out.println("IN HERE----");
+						
+						schme_lst.get(0).setDay(sa.getDay());
+						schme_lst.get(0).setExfof(sa.getExfof());
+						schme_lst.get(0).setFof(sa.getFof());
+						schme_lst.get(0).setScheme_code(sa.getScheme_code());
+						schme_lst.get(0).setTotal(sa.getTotal());
+						
+						ssn.saveOrUpdate(schme_lst.get(0));
+					}
+				}
+				else
+				{
+					ssn.save(sa);	
+				}
+				
+				
+				
 				
 				
 //				 //--------------------Average Maturity------------------------//
@@ -315,12 +358,12 @@ public class ExpR_AvgM_ScA_Insert_Main {
 				
 //				System.out.println("Scheme_code-->"+separated[0]);
 				//System.out.println("Date-->"+separated[1]);
-				if (i_i%500==0)
+				if (i_i%10==0)
 				{
 					  ssn.getTransaction().commit(); 
 					  ssn.beginTransaction();
-					  ssn.flush();
-				      ssn.clear();
+//					  ssn.flush();
+//				      ssn.clear();
 				      
 				      i_i=0;
 				}
@@ -328,12 +371,12 @@ public class ExpR_AvgM_ScA_Insert_Main {
 				i++;
      	    }
 			
-			System.out.println("<---Upload Complete---->");
 			
 			
 			
+			}// end of main loop
 			
-			
+			System.out.println("<--- Complete File Uploaded ---->");
 		}
 		catch(Exception e)
 		{
@@ -341,6 +384,8 @@ public class ExpR_AvgM_ScA_Insert_Main {
 			System.out.println("VALUE oF i==>"+i); 
 			System.out.println("DATE-->"+dt);
 			System.out.println("Scheme Code-->"+scheme_cd);
+			
+			System.out.println("Sheet no-->>"+c);
 			e.printStackTrace();
 		}
 		finally
@@ -360,7 +405,5 @@ public class ExpR_AvgM_ScA_Insert_Main {
 	   
 		
 			
-
-	}
-
+    }
 }

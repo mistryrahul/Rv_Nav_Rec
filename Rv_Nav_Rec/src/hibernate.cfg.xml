@@ -66,5 +66,10 @@
         <mapping class="controller.Report_10_Model"/>  
         <mapping class="controller.Report_11_Standard_Dev"/>  
         <mapping class="controller.Report_12_Model"/>
+        <!-- Debt -->
+        <mapping class="debt_Controller.Avg_maturity"/>
+        <mapping class="debt_Controller.Credit_rating_sum_groups"/>
+        <mapping class="debt_Controller.Debt_Report_1"/>
+        
     </session-factory>
 </hibernate-configuration>

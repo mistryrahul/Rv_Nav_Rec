@@ -20,7 +20,11 @@ public class Custom_Merged_report_quarterwise {
 	   int R_forwar_12_mnths;
 	   double forwar_18_mnths;
 	   int R_forwar_18_mnths;
+	   
 	   // nav_report_final;
+	   double backward_3;
+	   
+	   
 	   double backward_6;
 	   int R_backward_6;
 	   
@@ -134,6 +138,11 @@ public class Custom_Merged_report_quarterwise {
 	   double last_200_day_return;
 	   int R_last_200_day_return;
 	   
+	   
+	   // new addition
+	   
+	   double ex_ratio;
+	   double sc_aum;
 	   
 	   
 	public Report_6_pk getKey() {
@@ -591,6 +600,24 @@ public class Custom_Merged_report_quarterwise {
 	}
 	public void setR_last_200_day_return(int r_last_200_day_return) {
 		R_last_200_day_return = r_last_200_day_return;
+	}
+	public double getBackward_3() {
+		return backward_3;
+	}
+	public void setBackward_3(double backward_3) {
+		this.backward_3 = backward_3;
+	}
+	public double getEx_ratio() {
+		return ex_ratio;
+	}
+	public void setEx_ratio(double ex_ratio) {
+		this.ex_ratio = ex_ratio;
+	}
+	public double getSc_aum() {
+		return sc_aum;
+	}
+	public void setSc_aum(double sc_aum) {
+		this.sc_aum = sc_aum;
 	}
 	   
 	     
