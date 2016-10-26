@@ -24,14 +24,14 @@ public class ExpR_AvgM_ScA_Insert_Main {
 		String scheme_cd="", dt="", amc_cd="" , ex_ratio=""; 
 		final Pattern pattern = Pattern.compile("<<row>>(.+?)<</row>>");
 		Matcher matcher;
-		long i= 0;  // make this the last id after each operation
+		long i=1;  // make this the last id after each operation
 		int i_i=0;
 		Session ssn = null;
 		try
 		{   
 
 //			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/EXPENCERATIO.ace"), "UTF-8");
-			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_aum.ace"), "UTF-8");
+			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_index_part.ace"), "UTF-8");
 			
 //			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/SchemeISINMaster.ace"), "UTF-8");
 			SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
@@ -47,6 +47,41 @@ public class ExpR_AvgM_ScA_Insert_Main {
 				matcher.find();
 				String[] separated = matcher.group(1).split("\\|");
 						
+				
+				
+//				 -----------------SCHEME INDEX-------------------------------
+					Scheme_Index sa = new Scheme_Index();
+					
+					sa.setIndx(i++);
+					
+					sa.setScheme_code(Long.parseLong(separated[0]));
+					
+					if(separated[1]==null || separated[1].isEmpty())
+						{
+								
+						}
+						else
+						{
+							
+							sa.setIndex_code(Long.parseLong(separated[1]));
+						}
+					
+					ssn.save(sa);
+					
+					
+//					if(separated[2]==null || separated[2].isEmpty())
+//					{
+//							
+//					}
+//					else
+//					{
+//						sa.setExfof(Double.parseDouble(separated[2]));
+//					}
+					
+				
+				
+				
+				
 				
 				
 ////				------------------------SCHEMEISIIN UPLOAD------------------------
@@ -144,50 +179,50 @@ public class ExpR_AvgM_ScA_Insert_Main {
 //				ssn.save(sim);
 				
 				
-//				 ---------------SCHEME AUM-------------------------------
-				Scheme_Aum sa = new Scheme_Aum();
-				
-				sa.setId(i);
-				sa.setScheme_code(Long.parseLong(separated[0]));
-				
-				if(separated[1]==null || separated[1].isEmpty())
-					{
-							
-					}
-					else
-					{
-						java.util.Date dd = new SimpleDateFormat("yyyy-MM-dd").parse(separated[1].substring(0,10));
-						sa.setDay(dd);
-					}
-				if(separated[2]==null || separated[2].isEmpty())
-				{
-						
-				}
-				else
-				{
-					sa.setExfof(Double.parseDouble(separated[2]));
-				}
-				
-				if(separated[3]==null || separated[3].isEmpty())
-				{
-						
-				}
-				else
-				{
-					sa.setFof(Double.parseDouble(separated[3]));
-				}
-				
-				if(separated[4]==null || separated[4].isEmpty())
-				{
-						
-				}
-				else
-				{
-					sa.setTotal(Double.parseDouble(separated[4]));
-				}
-				
-				
-				ssn.save(sa);
+////				 ---------------SCHEME AUM-------------------------------
+//				Scheme_Aum sa = new Scheme_Aum();
+//				
+//				sa.setId(i);
+//				sa.setScheme_code(Long.parseLong(separated[0]));
+//				
+//				if(separated[1]==null || separated[1].isEmpty())
+//					{
+//							
+//					}
+//					else
+//					{
+//						java.util.Date dd = new SimpleDateFormat("yyyy-MM-dd").parse(separated[1].substring(0,10));
+//						sa.setDay(dd);
+//					}
+//				if(separated[2]==null || separated[2].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setExfof(Double.parseDouble(separated[2]));
+//				}
+//				
+//				if(separated[3]==null || separated[3].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setFof(Double.parseDouble(separated[3]));
+//				}
+//				
+//				if(separated[4]==null || separated[4].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setTotal(Double.parseDouble(separated[4]));
+//				}
+//				
+//				
+//				ssn.save(sa);
 				
 				
 //				 //--------------------Average Maturity------------------------//
@@ -315,7 +350,7 @@ public class ExpR_AvgM_ScA_Insert_Main {
 				
 //				System.out.println("Scheme_code-->"+separated[0]);
 				//System.out.println("Date-->"+separated[1]);
-				if (i_i%500==0)
+				if (i_i%50==0)
 				{
 					  ssn.getTransaction().commit(); 
 					  ssn.beginTransaction();

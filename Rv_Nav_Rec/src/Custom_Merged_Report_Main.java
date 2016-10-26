@@ -39,7 +39,7 @@ public class Custom_Merged_Report_Main {
 	    	
 	    	for(String column : colum_lst)
 	    	{  
-	    		   System.out.println("Generating Rank of-->>"+column);
+//	    		   System.out.println("Generating Rank of-->>"+column);
 	    		   ArrayList<Custom_Merged_Report_W_Rank> data_lst = (ArrayList<Custom_Merged_Report_W_Rank>) ssn.createQuery("from Custom_Merged_Report_W_Rank where quarter='"+quarter+"' order by "+column).list();
 	    		   
 	    		   temp_val_hldr=-999999;

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.Query;
+
 import org.apache.poi.util.SystemOutLogger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -13,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 
 import controller.ExpenceRatio;
 import controller.Scheme_Aum;
+import controller.Scheme_Paum;
 import controller.nav_hist;
 import debt_Controller.Avg_maturity;
 import debt_Controller.Credit_rating_sum_groups;
@@ -32,6 +35,8 @@ public class Debt_Report_1_Main
 		Debt_Report_1 ob1 = null;
 		Pk_generic ob1_pk =null;
 		int frst_iteration=1;
+				
+		double temp_weight=0;
 		
 		double ans_1=0,ans_2=0,ans_3=0,fin_res=0;
 		
@@ -172,7 +177,7 @@ public class Debt_Report_1_Main
 			    	 
 			    	 ret_12_mnths = calculate_return(crsg, -12, ssn);
 			    	 
-			    	 if(!Double.toString(ret_12_mnths).equals("99.99"))
+			    	 if(!Double.toString(ret_12_mnths).equals("-99.99"))
 			    	 {
 			    		 ob1.setReturn_12_months(ret_12_mnths);	 
 			    	 }
@@ -181,7 +186,7 @@ public class Debt_Report_1_Main
 			    	 
 			    	 ret_36_mnths = calculate_return(crsg, -36, ssn);
 			    	  
-			    	 if(!Double.toString(ret_36_mnths).equals("99.99"))
+			    	 if(!Double.toString(ret_36_mnths).equals("-99.99"))
 			    	 {
 //			    		 System.out.println("36 Months Return-->>"+ret_36_mnths);
 			    		 
@@ -200,7 +205,8 @@ public class Debt_Report_1_Main
 			    	 }
 			    	 
 			    	 
-			    	 
+			    	 //last ex-ratio where value is not 0
+//			    	 ArrayList<ExpenceRatio> e_rat = (ArrayList<ExpenceRatio>) ssn.createQuery("from ExpenceRatio where scheme_code=? and day<=? and ex_ratio!=0 order by day desc").setLong(0, crsg.getScheme_code()).setDate(1,crsg.getInv_date()).list();
 			    	 ArrayList<ExpenceRatio> e_rat = (ArrayList<ExpenceRatio>) ssn.createQuery("from ExpenceRatio where scheme_code=? and day=?").setLong(0, crsg.getScheme_code()).setDate(1,crsg.getInv_date()).list();
 			    	 
 			    	 if(e_rat.size()>0)
@@ -208,11 +214,11 @@ public class Debt_Report_1_Main
 			    		 ob1.setEx_ratio(e_rat.get(0).getEx_ratio());
                 	 }
 			  
-			    	 ArrayList<Scheme_Aum> sch_aum = (ArrayList<Scheme_Aum>) ssn.createQuery("from Scheme_Aum where scheme_code=? and day=?").setLong(0, crsg.getScheme_code()).setDate(1,crsg.getInv_date()).list(); 
+			    	 ArrayList<Scheme_Paum> sch_aum = (ArrayList<Scheme_Paum>) ssn.createQuery("from Scheme_Paum where scheme_code=? and day=?").setLong(0, crsg.getScheme_code()).setDate(1,crsg.getInv_date()).list(); 
 			    	 
 			    	 if(sch_aum.size()>0)
 			    	 {
-			    		 ob1.setAum(sch_aum.get(0).getExfof());
+			    		 ob1.setAum(sch_aum.get(0).getAvg_aum()/100); // cause it is in lakhs, we need that in crores
 			    		 
                 	 }
 			    	 
@@ -248,9 +254,49 @@ public class Debt_Report_1_Main
 		            	 ssn.save(dr_m.get(0));
 		             }
 		    
-		    
-		    
-		    
+		             
+		             ssn.getTransaction().commit();
+		             ssn.beginTransaction();
+		             
+		             Query query = ssn.createQuery("delete from Debt_Report_1 where return_36_months=0");
+		              
+		             int result = query.executeUpdate();
+		              
+		             if (result > 0) {
+		                 System.out.println("Returns with ) are removed");
+		             }
+		             
+		             ssn.getTransaction().commit();
+		             
+		             ssn.beginTransaction();
+		             
+		             
+                     Genrate_Rank(ssn);
+                     
+                     
+//                      ssn.close();
+//                      ssn = HIbernateSession.getSessionFactory().openSession(); 
+//		              ssn.beginTransaction();
+		              
+		              ArrayList<Debt_Report_1> mn_lst_totl = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1").list();
+                     
+                       for(Debt_Report_1 ob : mn_lst_totl)
+                       {
+                    	   temp_weight=(ob.getCredit_rating_rank()*0.3)+(ob.getReturn_12_months_rank()*0.2)+(ob.getReturn_36_months_rank()*0.3)+(ob.getModified_duration_rank()*0.2);
+                           ob.setWeight_to_ranks(temp_weight);
+                           
+                           temp_weight=0;
+                           
+                           ssn.update(ob);
+                       }
+                     ssn.getTransaction().commit();
+                     ssn.beginTransaction();
+                     
+                     Genrate_Rank_for_Weight(ssn);
+                     
+                     Generate_start_rating(ssn);
+		             
+                      
 			  
 		  }
 		  catch(Exception e)
@@ -259,12 +305,329 @@ public class Debt_Report_1_Main
 		  }
 		finally
 		{
-			ssn.getTransaction().commit();
-		    ssn.close();
+//			ssn.getTransaction().commit();
+     	    ssn.close();
 		    System.out.println("<<<<----Report COmplete----->>>>>");
 		}
 	}
 	
+	
+	
+	private static void Generate_start_rating(Session ssn) 
+	{
+		ssn.getTransaction().commit();
+		ssn.beginTransaction();
+		
+		int rec_counter=1;
+		int tmp_size=0, top_grp_1=0,top_grp_2=0,top_grp_3=0,top_grp_4=0,top_grp_5=0;
+//		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
+//        ssn.beginTransaction();
+        
+        ArrayList<Debt_Report_1> mn_lst_rank_wise = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by rank_of_weight_to_ranks desc").list();
+        tmp_size = mn_lst_rank_wise.size();
+        
+        top_grp_1=(int) Math.round(tmp_size*.10);
+        top_grp_2=(int) Math.round(tmp_size*.25);
+        top_grp_3=(int) Math.round(tmp_size*.30);
+        top_grp_4=(int) Math.round(tmp_size*.25);
+        top_grp_5=(int) Math.round(tmp_size*.10);
+        
+        if((top_grp_1+top_grp_2+top_grp_3+top_grp_4+top_grp_5)>tmp_size)
+        {
+        	top_grp_5 = top_grp_5 - ( (top_grp_1+top_grp_2+top_grp_3+top_grp_4+top_grp_5) - tmp_size );
+        }
+        
+//       System.out.println("Size-->"+tmp_size);
+//        System.out.println("1->"+top_grp_1);
+//        System.out.println("2->"+top_grp_2);
+//        System.out.println("3->"+top_grp_3);
+//        System.out.println("4->"+top_grp_4);
+//        System.out.println("5->"+top_grp_5);
+        
+        for(Debt_Report_1 ob : mn_lst_rank_wise)
+        {
+        	
+        	 
+        		 
+             if(rec_counter>=1 && rec_counter<=top_grp_1)
+             {
+//            	 System.out.println("5 star");
+		           	     
+		           	  if(ob.getAum()<100)
+		         	 {
+		           		ob.setStar("Unrated");
+		         	 }
+		         	 else
+		         	 {
+		         		ob.setStar("5 Star");
+		         	 }
+             }
+             
+             if(rec_counter>top_grp_1 &&  rec_counter<=(top_grp_1+top_grp_2))
+             {
+            	 if(ob.getAum()<100)
+	         	 {
+	           		ob.setStar("Unrated");
+	         	 }
+	         	 else
+	         	 {
+	         		ob.setStar("4 Star");
+	         	 }
+//            	 System.out.println("4 star");
+            
+             }
+             if(rec_counter>(top_grp_1+top_grp_2) &&  rec_counter<=(top_grp_1+top_grp_2+top_grp_3))
+             {
+            	 if(ob.getAum()<100)
+	         	 {
+	           		ob.setStar("Unrated");
+	         	 }
+	         	 else
+	         	 {
+	         		ob.setStar("3 Star");
+	         	 }
+           	 //            	 System.out.println("3 star");
+            
+             }
+             if(rec_counter>(top_grp_1+top_grp_2+top_grp_3) &&  rec_counter<=(top_grp_1+top_grp_2+top_grp_3+top_grp_4))
+             {
+            	 if(ob.getAum()<100)
+	         	 {
+	           		ob.setStar("Unrated");
+	         	 }
+	         	 else
+	         	 {
+	         		ob.setStar("2 Star");
+	         	 }
+           	 //            	 System.out.println("2 star");
+            
+             }
+             if(rec_counter>(top_grp_1+top_grp_2+top_grp_3+top_grp_4) &&  rec_counter<=(top_grp_1+top_grp_2+top_grp_3+top_grp_4+top_grp_5))
+             {
+            	 if(ob.getAum()<100)
+	         	 {
+	           		ob.setStar("Unrated");
+	         	 }
+	         	 else
+	         	 {
+	         		ob.setStar("1 Star");
+	         	 }
+           	 //            	 System.out.println("1 star");
+            
+             }
+             
+             ssn.update(ob);
+        	 rec_counter++;
+     
+        }
+         
+       ssn.getTransaction().commit();
+//		ssn.close();
+	}
+
+	private static void Genrate_Rank_for_Weight(Session ssn) 
+	{
+		 double retval=99999;
+		 double temp_val_hldr=123.00;
+		 int rank_hldr=1;
+		 int same_rank_flag=0;
+		 
+//		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
+//	    ssn.beginTransaction();
+	    
+		ArrayList<Debt_Report_1> quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by weight_to_ranks desc").list();
+	    
+		rank_hldr= quarter_list.size()+1;
+		
+		for(Debt_Report_1 arm: quarter_list)
+		{
+			 retval = Double.compare(temp_val_hldr,arm.getWeight_to_ranks());
+	 		    
+		    	if(retval==0)
+		    	{
+		    	    arm.setRank_of_weight_to_ranks(rank_hldr);
+		    	    ssn.update(arm);
+//		    	    db_flag++;
+		    	    same_rank_flag--;
+		    	}
+		    	else
+		    	{   
+		    		rank_hldr=rank_hldr+same_rank_flag;
+		    		same_rank_flag=0;
+		    		rank_hldr=rank_hldr-1;
+		    		
+		    		arm.setRank_of_weight_to_ranks(rank_hldr);
+		    	    ssn.update(arm);
+//		    	    db_flag++;  
+		    	}
+		    	
+		    	
+		    	temp_val_hldr=arm.getWeight_to_ranks();
+		}
+	    
+	    
+	    ssn.getTransaction().commit();
+	    ssn.beginTransaction();
+//	    ssn.close();
+		
+	 	
+	}
+	
+	
+
+	private static void Genrate_Rank(Session ssn)
+	{
+	     
+		ArrayList<Debt_Report_1> quarter_list = null;
+		String colum_lst[] = {"return_12_months","return_36_months","credit_rating","modified_duration"};
+		double temp_val_hldr=0;
+		int rank_hldr=1;
+		int same_rank_flag=0;
+		int retval=99;
+		
+//		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
+//	    ssn.beginTransaction();
+	    
+	    for(String colmn : colum_lst)
+	    {
+	    	if(colmn.equals("modified_duration"))
+	    	{
+	    		  quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by "+colmn+" desc").list();
+	    		  rank_hldr=0;  
+	    	}
+	    	else
+	    	{
+	    		quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by "+colmn+" desc").list();
+	    		rank_hldr=quarter_list.size()+1;
+	    	}
+	    	
+	    	   temp_val_hldr=-999999;
+//   	    	   rank_hldr=0;
+   	    	   same_rank_flag=0;
+   	    	   
+   	    	   for(Debt_Report_1 arm : quarter_list)
+   	    	   {
+   	    		   
+		   	    		if(colmn=="return_12_months")
+		 			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getReturn_12_months());
+		  		 		    
+		 	 		    	if(retval==0)
+		 	 		    	{
+		 	 		    	    arm.setReturn_12_months_rank(rank_hldr);
+		 	 		    	    ssn.update(arm);
+//		 	 		    	    db_flag++;
+		 	 		    	    same_rank_flag--;
+		 	 		    	}
+		 	 		    	else
+		 	 		    	{   
+		 	 		    		rank_hldr=rank_hldr+same_rank_flag;
+		 			    		same_rank_flag=0;
+		 			    		rank_hldr=rank_hldr-1;
+		 			    		
+		 	 		    		arm.setReturn_12_months_rank(rank_hldr);
+		 	 		    	    ssn.update(arm);
+//		 	 		    	    db_flag++;  
+		 	 		    	}
+		 	 		    	
+		 	 		    	temp_val_hldr=arm.getReturn_12_months();
+		 			   }
+		   	    		
+		   	    		if(colmn=="return_36_months")
+			 			   {
+			    			   retval = Double.compare(temp_val_hldr,arm.getReturn_36_months());
+			  		 		    
+			 	 		    	if(retval==0)
+			 	 		    	{
+			 	 		    	    arm.setReturn_36_months_rank(rank_hldr);
+			 	 		    	    ssn.update(arm);
+//			 	 		    	    db_flag++;
+			 	 		    	    same_rank_flag--;
+			 	 		    	}
+			 	 		    	else
+			 	 		    	{   
+			 	 		    		rank_hldr=rank_hldr+same_rank_flag;
+			 			    		same_rank_flag=0;
+			 			    		rank_hldr=rank_hldr-1;
+			 			    		
+			 	 		    		arm.setReturn_36_months_rank(rank_hldr);
+			 	 		    	    ssn.update(arm);
+//			 	 		    	    db_flag++;  
+			 	 		    	}
+			 	 		    	
+			 	 		    	temp_val_hldr=arm.getReturn_36_months();
+			 			   }	
+		   	    		
+		   	    		if(colmn=="credit_rating")
+			 			   {
+			    			   retval = Double.compare(temp_val_hldr,arm.getCredit_rating());
+			  		 		    
+			 	 		    	if(retval==0)
+			 	 		    	{
+			 	 		    	    arm.setCredit_rating_rank(rank_hldr);
+			 	 		    	    ssn.update(arm);
+//			 	 		    	    db_flag++;
+			 	 		    	    same_rank_flag--;
+			 	 		    	}
+			 	 		    	else
+			 	 		    	{   
+			 	 		    		rank_hldr=rank_hldr+same_rank_flag;
+			 			    		same_rank_flag=0;
+			 			    		rank_hldr=rank_hldr-1;
+			 			    		
+			 	 		    		arm.setCredit_rating_rank(rank_hldr);
+			 	 		    	    ssn.update(arm);
+//			 	 		    	    db_flag++;  
+			 	 		    	}
+			 	 		    	
+			 	 		    	
+			 	 		    	temp_val_hldr=arm.getCredit_rating();
+			 			   }
+		   	    		
+		   	    		if(colmn=="modified_duration")
+			 			   {
+			    			   retval = Double.compare(temp_val_hldr,arm.getModified_duration());
+			  		 		    
+			 	 		    	if(retval==0)
+			 	 		    	{
+			 	 		    	    arm.setModified_duration_rank(rank_hldr);
+			 	 		    	    ssn.update(arm);
+//			 	 		    	    db_flag++;
+			 	 		    	    same_rank_flag++;
+			 	 		    	}
+			 	 		    	else
+			 	 		    	{   
+			 	 		    		rank_hldr=rank_hldr+same_rank_flag;
+			 			    		same_rank_flag=0;
+			 			    		rank_hldr=rank_hldr+1;
+			 			    		
+			 	 		    		arm.setModified_duration_rank(rank_hldr);
+			 	 		    	    ssn.update(arm);
+//			 	 		    	    db_flag++;  
+			 	 		    	}
+			 	 		    	
+			 	 		    	
+			 	 		    	temp_val_hldr=arm.getModified_duration();
+			 			   }
+		   	    		   
+   	    	   }
+   	    	   
+   	    	   
+   	    	   
+   	    	  
+	    	
+	    	
+	    	
+	    	
+	    }
+	    
+	    
+//	    ssn.getTransaction().commit();
+//	    ssn.close();
+		
+		
+	}
+
 	private static double get_credit_rating(ArrayList<Credit_rating_sum_groups> new_calc) {
 		
 		double tot_val=0;

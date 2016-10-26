@@ -1,6 +1,7 @@
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +11,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import controller.ExpenceRatio;
 import controller.Scheme_Aum;
+import controller.Scheme_Paum;
+import debt_Controller.Avg_maturity;
+import debt_Controller.Pk_generic;
 
 public class ExR_AvgM_SchAum_Mass_Inser_Main 
 {
@@ -19,6 +24,8 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
     	int c=0; // temp var in main loop 
     	double no_of_lines;
 		String tmp_val;
+		java.util.Date dd_2=null;
+		java.util.Date dd_1=null;
 		String scheme_cd="", dt="", amc_cd="" , ex_ratio=""; 
 		final Pattern pattern = Pattern.compile("<<row>>(.+?)<</row>>");
 		Matcher matcher;
@@ -28,7 +35,7 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
 		try
 		{   
 			
-			for( c=149;c>=1;c--)   // main loop( loop size vary table to table)
+			for( c=20;c>=1;c--)   // main loop( loop size vary table to table)
 			{
 				
 	
@@ -36,13 +43,24 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
 			
 
 //			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/EXPENCERATIO.ace"), "UTF-8");
-			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/DB_Upload/aum/scheme_aum ("+c+").txt"), "UTF-8");
+//			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/DB_Upload/aum/scheme_aum ("+c+").txt"), "UTF-8");
 			
+//			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/scheme_paum.ace"), "UTF-8"); //scheme_paum
+			
+			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/DB_Upload/avg_maturity/avg_maturity ("+c+").txt"), "UTF-8"); //Avg_Maturity Ratio		
+				
+//			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/expenceratio.ace"), "UTF-8"); //Expence Ratio
 //			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/SchemeISINMaster.ace"), "UTF-8");
 			SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
+			
+			int tmp_year=0;
+			int tmp_mnth=0;
+			java.util.Date tmp_dd = null;
+			
 			ssn = sessionfactry.openSession();
 			ssn.beginTransaction();
 			
+			System.out.println("File NO-->>"+c);
 			
 			while (it.hasNext()) // if the file has lines 
      	    {
@@ -51,13 +69,335 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
 				
 				if(tmp_val.equals("<<eof>>"))
 				{
+					i=1;
 					break;
+					
 				}
 				
 				matcher = pattern.matcher(tmp_val);
 				matcher.find();
 				String[] separated = matcher.group(1).split("\\|");
+					
+//				---------------Avg_Maturity LATEST (Current One)-------------------------------
+				
+				
+				
+//				matcher = pattern.matcher(it.nextLine());
+//				matcher.find();
+//				
+////				System.out.println(matcher.group(1));
+//				
+//				
+//				 separated = matcher.group(1).split("\\|");
+			
+				 
+
+//				 System.out.print(separated[0]+"\t");
+//				 System.out.print(separated[1]+"\t");
+//				 System.out.print(separated[2]+"\t");
+//				 System.out.print(separated[3]+"\t");
+//				 System.out.println();
+				 
+				 
+				 Avg_maturity  dc = new Avg_maturity();
+				
+				 dc.setAmc_code(Long.parseLong(separated[0]));
+				
+//				   System.out.println("AMC-CODE-->>"+separated[0]);
+				 
+				 
+				Pk_generic pkey = new Pk_generic();
+				pkey.setScheme_code(Long.parseLong(separated[1]));         
+				
+//				System.out.println("SchemeCode-CODE-->>"+separated[1]);
+				
+				
+				dd_1 = new SimpleDateFormat("M/dd/yyyy").parse(separated[2]);
+				
+//				System.out.println(dd_1);
+				pkey.setDay(dd_1);
+				
+				
+				dc.setKey(pkey);
+				
+				if(separated[3]!=null && !separated[3].isEmpty())
+				{
+					 dd_2 = new SimpleDateFormat("M/dd/yyyy").parse(separated[3]);
+//					System.out.println(dd_2);
+					
+					dc.setInv_end_date(dd_2);	
+				}
+				
+				
+				if(separated[4] != null && !separated[4].isEmpty())
+				{
+//					System.out.print("4-"+separated[4]+"\t");
+					dc.setAvg_mat_num(Double.parseDouble(separated[4]));
+				}
+				
+				
+
+				
+				if(separated[5]!= null && !separated[5].isEmpty())
+				{
+//					System.out.print("5-"+separated[5]+"\t");
+					dc.setAvg_mat_days(separated[5]);
+				}
+				
+				
+				if(separated[6]!= null && !separated[6].isEmpty())
+				{
+//					System.out.print("6-"+separated[6]+"\t");
+					dc.setMod_dur_num(Double.parseDouble(separated[6]));
+				}
+				
+				
+				if(separated[7] != null && !separated[7].isEmpty())
+				{
+//					System.out.print("7-"+separated[7]+"\t");
+					dc.setMod_dur_days(separated[7]);
+				}
+				
+				
+			   if(separated[8]!=null && !separated[8].isEmpty())
+			   {
+				dc.setYtm(Double.parseDouble(separated[8]));   
+//				System.out.print("8-"+separated[8]+"\t");
+			   }
+				
+				
+				if(separated[9] != null && !separated[9].isEmpty() )
+				{
+					if(separated[9]!="NULL" || (separated[9].equals("NULL")!=true))
+					{
+//						System.out.print("9-"+separated[9]+"\t"); 
+						dc.setTurnover_ratio(Double.parseDouble(separated[9]));	
+					}
+					
+				}
+				
+				
+				
+				
+				ArrayList<Avg_maturity> avg_mat_lst = (ArrayList<Avg_maturity>) ssn.createQuery("from Avg_maturity where scheme_code=? and day=?").setLong(0,dc.getKey().getScheme_code() ).setDate(1, dc.getKey().getDay()).list();
+				
+				
+				if(avg_mat_lst.size()>0)
+				{
+					
+//					  if(avg_mat_lst.get(0).getMod_dur_num()!=0)
+//					  {
+//						  avg_mat_lst.get(0).setMod_dur_num(dc.getMod_dur_num());
+//					  }
+					
+				}
+				else
+				{
+					ssn.save(dc);
+					i_i++;
+				}
+				
+				
+				
+     				
+     					
 						
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+////				---------------SCHEME PAUM LATEST (Current One)-------------------------------
+//				Scheme_Paum sa = new Scheme_Paum();
+//				Pk_generic sa_pk =new Pk_generic();
+//				
+//				sa_pk.setScheme_code(Long.parseLong(separated[0]));
+//				
+//				scheme_cd=separated[0]; // for error showing
+//				
+//				if(separated[1]==null || separated[1].isEmpty())
+//					{
+//							
+//					}
+//					else
+//					{   
+//						tmp_year = Integer.parseInt(separated[1].substring(0,4));
+//						tmp_mnth = Integer.parseInt(separated[1].substring(4,6));
+//						
+//						if(tmp_mnth==1 && tmp_mnth==3 && tmp_mnth==5 && tmp_mnth==7 && tmp_mnth==8 && tmp_mnth==10 && tmp_mnth==12)
+//						{
+//							tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 31);
+//						}
+//						else if(tmp_mnth==4)
+//						{
+//							if(tmp_year%4==0  || (tmp_year%100==0 && tmp_year%400==0))
+//							{
+//								tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 29);
+//							}							
+//							else
+//							{
+//								tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 28);
+//							}
+//						}
+//						else
+//						{
+//							tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 30);
+//						}
+//						
+//						
+//						sa_pk.setDay(tmp_dd);
+//				   }
+//				if(separated[2]==null || separated[2].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setAmc_code(Integer.parseInt(separated[2]));
+//				}
+//				
+//				if(separated[3]==null || separated[3].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setAvg_aum(Double.parseDouble(separated[3]));
+//				}
+//				
+//				
+//				sa.setKey(sa_pk);
+//				
+//				
+//				
+//				ArrayList<Scheme_Paum> schme_lst = (ArrayList<Scheme_Paum>) ssn.createQuery("from Scheme_Paum where scheme_code=? and day=?").setLong(0,sa.getKey().getScheme_code() ).setDate(1, sa.getKey().getDay()).list();
+//				
+////				System.out.println("LIST SIZE_____----->>>"+schme_lst.size());
+//				
+//				if(schme_lst.size()>0)
+//				{
+////					 System.out.println("Prev exFOF-->>"+schme_lst.get(0).getExfof());
+////					 System.out.println("New FOF--->>"+sa.getExfof());
+////					 
+////					 System.out.println("COMpare-->>"+(schme_lst.get(0).getExfof()!=0));
+//					 
+//					 
+//					if(schme_lst.get(0).getAvg_aum()!=0)
+//					{
+////						System.out.println("IN HERE----");
+//						
+//						schme_lst.get(0).setAvg_aum(sa.getAvg_aum());
+//						schme_lst.get(0).setAmc_code(sa.getAmc_code());
+//						
+////						schme_lst.get(0).setFof(sa.getFof());
+////						schme_lst.get(0).setScheme_code(sa.getScheme_code());
+////						schme_lst.get(0).setTotal(sa.getTotal());
+//						
+//						ssn.saveOrUpdate(schme_lst.get(0));
+//					}
+//				}
+//				else
+//				{
+//					ssn.save(sa);	
+//				}
+				
+				
+				
+				
+////				---------------Expence Ration Latest (Current one)-------------------------------
+//				ExpenceRatio sa = new ExpenceRatio();
+//				Pk_generic sa_pk =new Pk_generic();
+//				
+//				
+////			    sa.setId(i++);
+//				sa.setAmc_code(Long.parseLong(separated[0]));
+////				sa.setScheme_code(Long.parseLong(separated[1]));
+//				
+//				sa_pk.setScheme_code(Long.parseLong(separated[1]));
+//				
+//				scheme_cd=separated[1]; // for error showing
+//				
+//				if(separated[2]==null || separated[2].isEmpty())
+//					{
+//							
+//					}
+//					else
+//					{   dt=separated[2]; // for error catching 
+//					
+//						java.util.Date dd = new SimpleDateFormat("M/dd/yyyy").parse(separated[2]);
+//						sa_pk.setDay(dd);
+////						sa.setDay(dd);
+//				    }
+//				if(separated[3]==null || separated[3].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setEx_ratio(Double.parseDouble(separated[3]));
+//				}
+//							
+//				
+//				sa.setKey(sa_pk);
+//				
+//				
+//				
+//				ArrayList<ExpenceRatio> schme_lst = (ArrayList<ExpenceRatio>) ssn.createQuery("from ExpenceRatio where scheme_code=? and day=?").setLong(0,sa.getKey().getScheme_code() ).setDate(1, sa.getKey().getDay()).list();
+//				
+////				System.out.println("LIST SIZE_____----->>>"+schme_lst.size());
+//				
+//				if(schme_lst.size()>0)
+//				{
+////					 System.out.println("Prev exFOF-->>"+schme_lst.get(0).getExfof());
+////					 System.out.println("New FOF--->>"+sa.getExfof());
+////					 
+////					 System.out.println("COMpare-->>"+(schme_lst.get(0).getExfof()!=0));
+//					 
+//					 
+////					if(schme_lst.get(0).getEx_ratio()!=0)
+////					{
+//////						System.out.println("IN HERE----");
+////						
+////						schme_lst.get(0).setEx_ratio(sa.getEx_ratio());
+////						schme_lst.get(0).setAmc_code(sa.getAmc_code());
+////						
+//////						schme_lst.get(0).setFof(sa.getFof());
+//////						schme_lst.get(0).setScheme_code(sa.getScheme_code());
+//////						schme_lst.get(0).setTotal(sa.getTotal());
+////						
+////						ssn.saveOrUpdate(schme_lst.get(0));
+////					}
+//				}
+//				else
+//				{
+//					ssn.save(sa);	
+//				}
+//				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				
 				
 ////				------------------------SCHEMEISIIN UPLOAD------------------------
@@ -155,79 +495,79 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
 //				ssn.save(sim);
 				
 				
-//				 ---------------SCHEME AUM-------------------------------
-				Scheme_Aum sa = new Scheme_Aum();
-				
-				sa.setId(i);
-				sa.setScheme_code(Long.parseLong(separated[0]));
-				
-				if(separated[1]==null || separated[1].isEmpty())
-					{
-							
-					}
-					else
-					{
-						java.util.Date dd = new SimpleDateFormat("yyyy-MM-dd").parse(separated[1].substring(0,10));
-						sa.setDay(dd);
-					}
-				if(separated[2]==null || separated[2].isEmpty())
-				{
-						
-				}
-				else
-				{
-					sa.setExfof(Double.parseDouble(separated[2]));
-				}
-				
-				if(separated[3]==null || separated[3].isEmpty())
-				{
-						
-				}
-				else
-				{
-					sa.setFof(Double.parseDouble(separated[3]));
-				}
-				
-				if(separated[4]==null || separated[4].isEmpty())
-				{
-						
-				}
-				else
-				{
-					sa.setTotal(Double.parseDouble(separated[4]));
-				}
-				
-				
-				
-				ArrayList<Scheme_Aum> schme_lst = (ArrayList<Scheme_Aum>) ssn.createQuery("from Scheme_Aum where scheme_code=? and day=?").setLong(0,sa.getScheme_code() ).setDate(1, sa.getDay()).list();
-				
-				System.out.println("LIST SIZE_____----->>>"+schme_lst.size());
-				
-				if(schme_lst.size()>0)
-				{
-					 System.out.println("Prev exFOF-->>"+schme_lst.get(0).getExfof());
-					 System.out.println("New FOF--->>"+sa.getExfof());
-					 
-					 System.out.println("COMpare-->>"+(schme_lst.get(0).getExfof()!=0));
-					 
-					 
-					if(schme_lst.get(0).getExfof()!=0)
-					{
-						System.out.println("IN HERE----");
-						
-						schme_lst.get(0).setDay(sa.getDay());
-						schme_lst.get(0).setExfof(sa.getExfof());
-						schme_lst.get(0).setFof(sa.getFof());
-						schme_lst.get(0).setScheme_code(sa.getScheme_code());
-						schme_lst.get(0).setTotal(sa.getTotal());
-						
-						ssn.saveOrUpdate(schme_lst.get(0));
-					}
-				}
-				else
-				{
-					ssn.save(sa);	
-				}
+////				 ---------------SCHEME AUM-------------------------------
+//				Scheme_Aum sa = new Scheme_Aum();
+//				
+//				sa.setId(i);
+//				sa.setScheme_code(Long.parseLong(separated[0]));
+//				
+//				if(separated[1]==null || separated[1].isEmpty())
+//					{
+//							
+//					}
+//					else
+//					{
+//						java.util.Date dd = new SimpleDateFormat("yyyy-MM-dd").parse(separated[1].substring(0,10));
+//						sa.setDay(dd);
+//					}
+//				if(separated[2]==null || separated[2].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setExfof(Double.parseDouble(separated[2]));
+//				}
+//				
+//				if(separated[3]==null || separated[3].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setFof(Double.parseDouble(separated[3]));
+//				}
+//				
+//				if(separated[4]==null || separated[4].isEmpty())
+//				{
+//						
+//				}
+//				else
+//				{
+//					sa.setTotal(Double.parseDouble(separated[4]));
+//				}
+//				
+//				
+//				
+//				ArrayList<Scheme_Aum> schme_lst = (ArrayList<Scheme_Aum>) ssn.createQuery("from Scheme_Aum where scheme_code=? and day=?").setLong(0,sa.getScheme_code() ).setDate(1, sa.getDay()).list();
+//				
+////				System.out.println("LIST SIZE_____----->>>"+schme_lst.size());
+//				
+//				if(schme_lst.size()>0)
+//				{
+////					 System.out.println("Prev exFOF-->>"+schme_lst.get(0).getExfof());
+////					 System.out.println("New FOF--->>"+sa.getExfof());
+////					 
+////					 System.out.println("COMpare-->>"+(schme_lst.get(0).getExfof()!=0));
+//					 
+//					 
+//					if(schme_lst.get(0).getExfof()!=0)
+//					{
+////						System.out.println("IN HERE----");
+//						
+//						schme_lst.get(0).setDay(sa.getDay());
+//						schme_lst.get(0).setExfof(sa.getExfof());
+//						schme_lst.get(0).setFof(sa.getFof());
+//						schme_lst.get(0).setScheme_code(sa.getScheme_code());
+//						schme_lst.get(0).setTotal(sa.getTotal());
+//						
+//						ssn.saveOrUpdate(schme_lst.get(0));
+//					}
+//				}
+//				else
+//				{
+//					ssn.save(sa);	
+//				}
 				
 				
 				
@@ -358,7 +698,8 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
 				
 //				System.out.println("Scheme_code-->"+separated[0]);
 				//System.out.println("Date-->"+separated[1]);
-				if (i_i%10==0)
+				
+				if (i_i%5==0)
 				{
 					  ssn.getTransaction().commit(); 
 					  ssn.beginTransaction();
@@ -382,10 +723,10 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
 		{
 			
 			System.out.println("VALUE oF i==>"+i); 
-			System.out.println("DATE-->"+dt);
+//			System.out.println("DATE-->"+dt);
 			System.out.println("Scheme Code-->"+scheme_cd);
 			
-			System.out.println("Sheet no-->>"+c);
+//			System.out.println("Sheet no-->>"+c);
 			e.printStackTrace();
 		}
 		finally
