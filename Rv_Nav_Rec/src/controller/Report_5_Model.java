@@ -36,6 +36,8 @@ public class Report_5_Model
 	double year_1_plus;
 	int year_1_plus_rank;
 	
+	String Fund_Type; 
+	
 //	java.util.Date nav_from_date;
 //	java.util.Date nav_to_date;
 //	double nav_value;
@@ -138,6 +140,12 @@ public class Report_5_Model
 	}
 	public void setYear_1_4_rank(int year_1_4_rank) {
 		this.year_1_4_rank = year_1_4_rank;
+	}
+	public String getFund_Type() {
+		return Fund_Type;
+	}
+	public void setFund_Type(String fund_Type) {
+		Fund_Type = fund_Type;
 	}
 	
 

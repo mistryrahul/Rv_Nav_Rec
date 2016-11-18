@@ -16,7 +16,7 @@ public class Report_Merged_5_6_8_Model
    double forwar_9_mnths;
    double forwar_12_mnths;
    double forwar_18_mnths;
-   
+   double forwar_36_mnths;
    // nav_report_final;
    double backward_3;
    double backward_6;
@@ -57,7 +57,7 @@ public class Report_Merged_5_6_8_Model
    long no_of_stock;
   
    
-   // calmal Ratio
+   // calmar Ratio
    
    double max_Drawdown_year_1;
    double max_Drawdown_year_2;
@@ -75,6 +75,7 @@ public class Report_Merged_5_6_8_Model
    
    double ex_ratio;
    double sc_aum;
+   
    
    
 public double getAvg_return_50_minus_200() {
@@ -412,7 +413,17 @@ public double getSc_aum() {
 public void setSc_aum(double sc_aum) {
 	this.sc_aum = sc_aum;
 }
+
+public double getForwar_36_mnths() {
+	return forwar_36_mnths;
+}
+
+public void setForwar_36_mnths(double forwar_36_mnths) {
+	this.forwar_36_mnths = forwar_36_mnths;
+}
+
  
+
 
 
    

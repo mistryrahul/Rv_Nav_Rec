@@ -31,7 +31,7 @@ import sessionFactory.HIbernateSession;
 public class Excel_report_mn {
 	
 	
-	public static HSSFSheet Get_Average_Column_WISE(HSSFSheet sheet , int size ,int cmnt_size)
+	public static HSSFSheet Get_Average_Column_WISE(HSSFSheet sheet , int size ,int cmnt_size, String Fund_Type)
 	{
 		   String col_name="";
 		   int ctr=0;
@@ -118,7 +118,7 @@ public class Excel_report_mn {
 			       	
 			       	ob.setQuarter(col_name);
 			       	ob.setAverage(res);
-			       	
+			       	ob.setFund_Type(Fund_Type);
 //			       	System.out.println("saving VALUE of Res in Object// value of K-->>"+k);
 			       	
 			       	ssn.saveOrUpdate(ob);		
@@ -150,12 +150,12 @@ public class Excel_report_mn {
 		    
 	// Saving the Return_value column in db by comparing the value by Qtr_Avg table
 		    
-		    ArrayList<Qtr_Avg> qtr_avg_list = (ArrayList<Qtr_Avg>) ssn.createCriteria(Qtr_Avg.class).list();
+		    ArrayList<Qtr_Avg> qtr_avg_list = (ArrayList<Qtr_Avg>) ssn.createCriteria(Qtr_Avg.class).add(Restrictions.eq("Fund_Type", Fund_Type)).list();
 		    int db_flg=0;
 		    
 		    for(Qtr_Avg qa : qtr_avg_list)
 		    {
-		    	ArrayList<Avg_ret_Model> avg_return_list = (ArrayList<Avg_ret_Model>) ssn.createCriteria(Avg_ret_Model.class).add(Restrictions.eq("comment", qa.getQuarter())).list();
+		    	ArrayList<Avg_ret_Model> avg_return_list = (ArrayList<Avg_ret_Model>) ssn.createCriteria(Avg_ret_Model.class).add(Restrictions.eq("comment", qa.getQuarter())).add(Restrictions.eq("key.Fund_Type", Fund_Type)).list();
 		    	
 		         for(Avg_ret_Model a_r_m: avg_return_list)
 		         {
@@ -204,13 +204,13 @@ public class Excel_report_mn {
 		   
 	}
 	
-	private static int Get_Rank(String comment, Long s_code, Session ssn) {
+	private static int Get_Rank(String comment, Long s_code, Session ssn , String Fund_Type) {
 	
 		ArrayList<String> tmp =new ArrayList<String>();
 		int r=0;
 		ArrayList<String> comment_list = null;
 		
-		String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt";            
+		String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt and Fund_Type='"+Fund_Type+"'";            
 		Query q = ssn.createQuery(hql);
 		q.setParameter("s_cd", s_code);
 		q.setParameter("cmnt", comment);
@@ -229,7 +229,7 @@ public class Excel_report_mn {
 
 	
 	
-	public static double Generate_rows(String cmnt,Long s_code, Session ssn)
+	public static double Generate_rows(String cmnt,Long s_code, Session ssn, String Fund_Type)
 	{
 //		ArrayList<String> tmp =new ArrayList<String>();
 		double r=0;
@@ -237,7 +237,7 @@ public class Excel_report_mn {
 //        Session ssn = HIbernateSession.getSessionFactory().openSession();
 //        ssn.beginTransaction();
 		
-		String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt";            
+		String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt and key.Fund_Type='"+Fund_Type+"'";            
 		Query q = ssn.createQuery(hql);
 		q.setParameter("s_cd", s_code);
 		q.setParameter("cmnt", cmnt);
@@ -270,6 +270,7 @@ public class Excel_report_mn {
 	public static void main(String[] args) 
 	{
 		 int comment_list_length=0;
+		 String Fund_Type;
          ArrayList<ArrayList<String>> book = new ArrayList<ArrayList<String>>();
          double res=0;
          int rank=0;
@@ -277,24 +278,61 @@ public class Excel_report_mn {
          ArrayList<String> comment_list = null;
          ArrayList<Long> scheme_code_list = null;
          
+         ArrayList<Long> scheme_code_list_temp = new ArrayList<Long>();
+         
+         
          Session ssn = HIbernateSession.getSessionFactory().openSession();
 //		 ssn.beginTransaction();
          
-        Criteria criteria_1 = ssn.createCriteria( Avg_ret_Model.class );
- 		criteria_1.setProjection( Projections.distinct(Projections.property("comment")));  		
-//   		criteria_1.add(Restrictions.eq("scheme_Code", s_code));
-   		criteria_1.addOrder(Order.asc("end_dt"));
+         // Type of fund is responsible for selecting appropriate scheme codes  
+//         Fund_Type="EQUITY_ELSS"; // This field is mandatory
+         Fund_Type="EQUITY_SML"; // This field is mandatory
+         
+                        
+         
+//                         // If required to done MANUALY for some scheme_Code 
+//				         long[] schm_cd_lst = {23,407,447,489,716,748,758,903,905,931,933,942,950,1131,1273,1282,1283,1284,1331,1346,1348,1441,1464,1492,1608,1623,1849,1858,1956,1962,1973,2069,2090,2127,2129,2133,2171,2235,2271,2384,2390,2455,2461,2654,2669,2681,2711,2752,2782,2860,2896,3065,3247,3249,3281,3305,3317,3461,3581,3587,3626,3641,3644,4282,4457,4980,5153,6075,7329,7615,7747,7785,7841,7870,7874,8151,8217,8229,8250,8463,9078,9240,11889,12836,12860,12865,14493,14559,15557,16672,16706,21293,21769,24776,25378,25473,25995,26481,26778,27106,27775,28707,29082,29277,29359,29360,29424,29786,30021,30022,30395,30396,30397,31046,31353,31451,31571,31642,31837,32280,32348,32542,32658,33053,35321};
+//				         
+//				         for(long b : schm_cd_lst)
+//				         {
+//				        	 scheme_code_list_temp.add(b);
+//				         }
+//				         
+//				         System.out.println("Added to list Successfully......");
+//				         
+//				         comment_list = (ArrayList<String>) ssn.createQuery("select DISTINCT(comment) from avg_return where scheme_code IN :list and Fund_Type='"+Fund_Type+"' order by end_dt ").setParameterList("list", scheme_code_list_temp).list();
+//				         scheme_code_list = (ArrayList<Long>) ssn.createQuery("select DISTINCT(key.scheme_code) from avg_return where scheme_code IN :list and Fund_Type='"+Fund_Type+"' order by key.scheme_code ").setParameterList("list", scheme_code_list_temp).list();
+         
+         
+         
+//          int schm_cd_lst=15;
+         
+         
+								        Criteria criteria_1 = ssn.createCriteria( Avg_ret_Model.class );
+								 		criteria_1.setProjection( Projections.distinct(Projections.property("comment")));
+								 		criteria_1.add(Restrictions.eq("key.Fund_Type", Fund_Type));
+								//   		criteria_1.add(Restrictions.eq("scheme_Code", s_code));
+								   		criteria_1.addOrder(Order.asc("end_dt"));
    		
    		
-   		Criteria criteria_2 = ssn.createCriteria( nav_report_3_stable.class );
- 		criteria_2.setProjection( Projections.distinct(Projections.property("scheme_Code")));  		
-//   		criteria_1.add(Restrictions.eq("scheme_Code", s_code));
-   		criteria_2.addOrder(Order.asc("scheme_Code"));
+//   		Criteria criteria_2 = ssn.createCriteria( nav_report_3_stable.class );
+// 		criteria_2.setProjection( Projections.distinct(Projections.property("scheme_Code")));
+// 		criteria_2.add(Restrictions.eq("Fund_Type", Fund_Type));
+////   		criteria_1.add(Restrictions.eq("scheme_Code", s_code));
+//   		criteria_2.addOrder(Order.asc("scheme_Code"));
    		
+									   		Criteria criteria_2 = ssn.createCriteria( Avg_ret_Model.class );
+									 		criteria_2.setProjection( Projections.distinct(Projections.property("key.scheme_code")));
+									 		criteria_2.add(Restrictions.eq("key.Fund_Type", Fund_Type));
+									//   		criteria_1.add(Restrictions.eq("scheme_Code", s_code));
+									   		criteria_2.addOrder(Order.asc("key.scheme_code"));
    		
-   		
+   		   		
 		comment_list = (ArrayList<String>) criteria_1.list();
 		scheme_code_list = (ArrayList<Long>) criteria_2.list();
+   		
+   		
+   		
 		comment_list_length=comment_list.size();
 //		ssn.getTransaction().commit();
  
@@ -306,8 +344,8 @@ public class Excel_report_mn {
     	  
         for(String comment:comment_list)
         {
-        	 res = Generate_rows(comment ,s_code,ssn);
-        	 rank =Get_Rank(comment ,s_code,ssn);
+        	 res = Generate_rows(comment ,s_code,ssn,Fund_Type);
+        	 rank =Get_Rank(comment ,s_code,ssn,Fund_Type);
         	 
         	 rows.add(Double.toString(res));
         	 rows.add(Integer.toString(rank));
@@ -372,11 +410,11 @@ public class Excel_report_mn {
           }
       }
             
-      sheet = Get_Average_Column_WISE(sheet,scheme_code_list.size() ,comment_list_revised.size());
+      sheet = Get_Average_Column_WISE(sheet,scheme_code_list.size() ,comment_list_revised.size(), Fund_Type);
       
 //      GeneRating the New Sheet With 1 and -1 
         
-       Get_Cat_Avg_Indicator( scheme_code_list,comment_list) ;
+       Get_Cat_Avg_Indicator( scheme_code_list,comment_list,Fund_Type) ;
        
       
       
@@ -406,7 +444,7 @@ public class Excel_report_mn {
 
 	}
 
-	private static void Get_Cat_Avg_Indicator ( ArrayList<Long> scheme_code_list, ArrayList<String> comment_list ) 
+	private static void Get_Cat_Avg_Indicator ( ArrayList<Long> scheme_code_list, ArrayList<String> comment_list , String Fund_Type ) 
 	{
 		HSSFWorkbook workbook2 = new HSSFWorkbook();
 	    HSSFSheet sheet2 = workbook2.createSheet("AvgReport2");
@@ -441,7 +479,7 @@ public class Excel_report_mn {
 		    		 
 		 
 		    		 String hql = "FROM avg_return WHERE comment='"+coment+
-				     "' and scheme_code="+sc;
+				     "' and scheme_code="+sc+" and key.Fund_Type='"+Fund_Type+"'" ;
 				
 				     Query query = ssn.createQuery(hql);
 		    		 

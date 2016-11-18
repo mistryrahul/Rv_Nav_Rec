@@ -10,8 +10,8 @@ public class Report_6_Model
 	Report_6_pk key;
     double forward_12_mnth_ret; // forward 12 months return
 	String comment; // Quarter of year
-    
-    
+   
+	
     
 	double last_4_qtr_val; // total return of last 4 quarter
 	int last_4_qtr_ret; // total category average indicator score sum  
@@ -334,7 +334,6 @@ public class Report_6_Model
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-    
 	
 	
 	

@@ -14,7 +14,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import sessionFactory.HIbernateSession;
-
+import controller.Avg_ret_Model;
 import controller.Qtr_Avg;
 import controller.Report_5_Model;
 import controller.nav_hist;
@@ -26,16 +26,29 @@ public class Report_5_Main {
 
 	public static void main(String[] args) throws ParseException 
 	{
+		String Fund_Type;
 		int db_flag=0;
+		
+		// Type of fund is responsible for selecting appropriate scheme codes  
+//        Fund_Type="EQUITY_ELSS"; // This field is manditory //
+        Fund_Type="EQUITY_SML"; // This field is manditory //
+        
+        
 		SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
 		Session ssn = sessionfactry.openSession();
 		ssn.beginTransaction();
+											
+											Criteria criteria_1 = ssn.createCriteria( Avg_ret_Model.class );
+											criteria_1.setProjection( Projections.distinct(Projections.property("key.scheme_code")));
+											criteria_1.add(Restrictions.eq("key.Fund_Type", Fund_Type));
+									 		criteria_1.addOrder(Order.asc("key.scheme_code"));
+											
+									 		ArrayList<Long> scheme_code_list = (ArrayList<Long>) criteria_1.list();
 		
-		Criteria criteria_1 = ssn.createCriteria( nav_report_3_stable.class );
-		criteria_1.setProjection( Projections.distinct(Projections.property("scheme_Code")));  		
- 		criteria_1.addOrder(Order.asc("scheme_Code"));
 		
- 		ArrayList<Long> scheme_code_list = (ArrayList<Long>) criteria_1.list();
+//		ArrayList<Long> scheme_code_list = new ArrayList<Long>();
+//		scheme_code_list.add((long)7615);
+		
 		
 //		ArrayList<Long> scheme_code_list = new ArrayList<Long>();
 //		scheme_code_list.add((long) 461);
@@ -66,6 +79,7 @@ public class Report_5_Main {
  		       {
  		    	     Criteria criteria_12 = ssn.createCriteria( nav_report_3_stable.class );
  		 		     criteria_12.setProjection( Projections.distinct(Projections.property("nav_from_date")));
+ 		 		     criteria_12.add(Restrictions.eq("Fund_Type",Fund_Type));
  		 		     criteria_12.add(Restrictions.eq("scheme_Code",sc));
  		  		     criteria_12.addOrder(Order.asc("nav_from_date"));
  		  		      
@@ -91,7 +105,7 @@ public class Report_5_Main {
  		  		        	from_dt_temp=qtr_avg_list.get(0).getNav_date();
  		  		        	rm5 = new Report_5_Model();
  		  		        	
-
+ 		  		        	rm5.setFund_Type(Fund_Type);
  		  		       
 // 		  		         System.out.println("FROM DATE-->"+from_dt_temp);
  		  		        	
@@ -446,11 +460,11 @@ public class Report_5_Main {
  		       ssn.close();
 		      System.out.println("<<--- Report Complete --->>");
 	     	
-   	      	GENERATE_RANK();
+   	      	GENERATE_RANK(Fund_Type);
 
 	}
 
-	private static void GENERATE_RANK() 
+	private static void GENERATE_RANK(String Fund_Type) 
 	{
 		
 		SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
@@ -478,7 +492,7 @@ public class Report_5_Main {
 		for(String cl : comment_lst)
 		{
 			String hql = "FROM Report_5_Model WHERE day_comment='"+cl+
-		              "' and "+column+"!=0  ORDER BY "+column+" DESC";
+		              "' and "+column+"!=0 and Fund_Type='"+Fund_Type+"' ORDER BY "+column+" DESC";
 		
 		    Query query = ssn.createQuery(hql);
 		    

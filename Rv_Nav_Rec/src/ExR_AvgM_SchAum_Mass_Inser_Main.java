@@ -222,99 +222,99 @@ public class ExR_AvgM_SchAum_Mass_Inser_Main
 				
 				
 				
-////				---------------SCHEME PAUM LATEST (Current One)-------------------------------
-//				Scheme_Paum sa = new Scheme_Paum();
-//				Pk_generic sa_pk =new Pk_generic();
-//				
-//				sa_pk.setScheme_code(Long.parseLong(separated[0]));
-//				
-//				scheme_cd=separated[0]; // for error showing
-//				
-//				if(separated[1]==null || separated[1].isEmpty())
-//					{
-//							
-//					}
-//					else
-//					{   
-//						tmp_year = Integer.parseInt(separated[1].substring(0,4));
-//						tmp_mnth = Integer.parseInt(separated[1].substring(4,6));
-//						
-//						if(tmp_mnth==1 && tmp_mnth==3 && tmp_mnth==5 && tmp_mnth==7 && tmp_mnth==8 && tmp_mnth==10 && tmp_mnth==12)
-//						{
-//							tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 31);
-//						}
-//						else if(tmp_mnth==4)
-//						{
-//							if(tmp_year%4==0  || (tmp_year%100==0 && tmp_year%400==0))
-//							{
-//								tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 29);
-//							}							
-//							else
-//							{
-//								tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 28);
-//							}
-//						}
-//						else
-//						{
-//							tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 30);
-//						}
-//						
-//						
-//						sa_pk.setDay(tmp_dd);
-//				   }
-//				if(separated[2]==null || separated[2].isEmpty())
-//				{
-//						
-//				}
-//				else
-//				{
-//					sa.setAmc_code(Integer.parseInt(separated[2]));
-//				}
-//				
-//				if(separated[3]==null || separated[3].isEmpty())
-//				{
-//						
-//				}
-//				else
-//				{
-//					sa.setAvg_aum(Double.parseDouble(separated[3]));
-//				}
-//				
-//				
-//				sa.setKey(sa_pk);
-//				
-//				
-//				
-//				ArrayList<Scheme_Paum> schme_lst = (ArrayList<Scheme_Paum>) ssn.createQuery("from Scheme_Paum where scheme_code=? and day=?").setLong(0,sa.getKey().getScheme_code() ).setDate(1, sa.getKey().getDay()).list();
-//				
-////				System.out.println("LIST SIZE_____----->>>"+schme_lst.size());
-//				
-//				if(schme_lst.size()>0)
-//				{
-////					 System.out.println("Prev exFOF-->>"+schme_lst.get(0).getExfof());
-////					 System.out.println("New FOF--->>"+sa.getExfof());
-////					 
-////					 System.out.println("COMpare-->>"+(schme_lst.get(0).getExfof()!=0));
+//				---------------SCHEME PAUM LATEST (Current One)-------------------------------
+				Scheme_Paum sa = new Scheme_Paum();
+				Pk_generic sa_pk =new Pk_generic();
+				
+				sa_pk.setScheme_code(Long.parseLong(separated[0]));
+				
+				scheme_cd=separated[0]; // for error showing
+				
+				if(separated[1]==null || separated[1].isEmpty())
+					{
+							
+					}
+					else
+					{   
+						tmp_year = Integer.parseInt(separated[1].substring(0,4));
+						tmp_mnth = Integer.parseInt(separated[1].substring(4,6));
+						
+						if(tmp_mnth==1 && tmp_mnth==3 && tmp_mnth==5 && tmp_mnth==7 && tmp_mnth==8 && tmp_mnth==10 && tmp_mnth==12)
+						{
+							tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 31);
+						}
+						else if(tmp_mnth==4)
+						{
+							if(tmp_year%4==0  || (tmp_year%100==0 && tmp_year%400==0))
+							{
+								tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 29);
+							}							
+							else
+							{
+								tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 28);
+							}
+						}
+						else
+						{
+							tmp_dd = new Date((tmp_year-1900), (tmp_mnth-1), 30);
+						}
+						
+						
+						sa_pk.setDay(tmp_dd);
+				   }
+				if(separated[2]==null || separated[2].isEmpty())
+				{
+						
+				}
+				else
+				{
+					sa.setAmc_code(Integer.parseInt(separated[2]));
+				}
+				
+				if(separated[3]==null || separated[3].isEmpty())
+				{
+						
+				}
+				else
+				{
+					sa.setAvg_aum(Double.parseDouble(separated[3]));
+				}
+				
+				
+				sa.setKey(sa_pk);
+				
+				
+				
+				ArrayList<Scheme_Paum> schme_lst = (ArrayList<Scheme_Paum>) ssn.createQuery("from Scheme_Paum where scheme_code=? and day=?").setLong(0,sa.getKey().getScheme_code() ).setDate(1, sa.getKey().getDay()).list();
+				
+//				System.out.println("LIST SIZE_____----->>>"+schme_lst.size());
+				
+				if(schme_lst.size()>0)
+				{
+//					 System.out.println("Prev exFOF-->>"+schme_lst.get(0).getExfof());
+//					 System.out.println("New FOF--->>"+sa.getExfof());
 //					 
-//					 
-//					if(schme_lst.get(0).getAvg_aum()!=0)
-//					{
-////						System.out.println("IN HERE----");
-//						
-//						schme_lst.get(0).setAvg_aum(sa.getAvg_aum());
-//						schme_lst.get(0).setAmc_code(sa.getAmc_code());
-//						
-////						schme_lst.get(0).setFof(sa.getFof());
-////						schme_lst.get(0).setScheme_code(sa.getScheme_code());
-////						schme_lst.get(0).setTotal(sa.getTotal());
-//						
-//						ssn.saveOrUpdate(schme_lst.get(0));
-//					}
-//				}
-//				else
-//				{
-//					ssn.save(sa);	
-//				}
+//					 System.out.println("COMpare-->>"+(schme_lst.get(0).getExfof()!=0));
+					 
+					 
+					if(schme_lst.get(0).getAvg_aum()!=0)
+					{
+//						System.out.println("IN HERE----");
+						
+						schme_lst.get(0).setAvg_aum(sa.getAvg_aum());
+						schme_lst.get(0).setAmc_code(sa.getAmc_code());
+						
+//						schme_lst.get(0).setFof(sa.getFof());
+//						schme_lst.get(0).setScheme_code(sa.getScheme_code());
+//						schme_lst.get(0).setTotal(sa.getTotal());
+						
+						ssn.saveOrUpdate(schme_lst.get(0));
+					}
+				}
+				else
+				{
+					ssn.save(sa);	
+				}
 				
 				
 				

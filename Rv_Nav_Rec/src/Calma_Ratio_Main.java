@@ -29,7 +29,14 @@ public class Calma_Ratio_Main {
 	 */
 	public static void main(String[] args) throws ParseException 
 	{
-	     int db_save=0;
+	     int db_save=1;
+	     String Fund_Type;
+	     
+	     
+	  // Type of fund is responsible for selecting appropriate scheme codes  
+//	    Fund_Type="EQUITY_ELSS"; // This field is mandatory //
+	     Fund_Type="EQUITY_SML"; // This field is mandatory // 
+	     
 		Calendar cal = Calendar.getInstance(); 
 		java.util.Date temp_date=null;
 		int yr_incr=1; // year increment flag
@@ -37,8 +44,8 @@ public class Calma_Ratio_Main {
 		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
 	    ssn.beginTransaction();		
 
-
- 		String hql_nw=" from avg_return where start_dt>='2003-06-30' and start_dt<='2015-03-31'";
+	    String hql_nw=" from avg_return where start_dt>='2000-03-31' and key.Fund_Type='"+Fund_Type+"'";
+// 		String hql_nw=" from avg_return where start_dt>='2003-06-30' and start_dt<='2015-03-31'";
  		
  		Query q_2 = ssn.createQuery(hql_nw);
  		
@@ -62,6 +69,7 @@ public class Calma_Ratio_Main {
  			  
  			  pk.setFrom_date(arm.getKey().getStart_dt());
  			  pk.setScheme_code(arm.getKey().getScheme_code());
+ 			  pk.setFund_Type(Fund_Type);
  			  
  			  crm.setKey(pk);
  			 java.util.Date dd=pk.getFrom_date();
@@ -106,15 +114,14 @@ public class Calma_Ratio_Main {
  
 			        GET_CALMA_RATIO(crm , yr_incr , temp_date);
 			       
-			       
-			       
-			       			       
+			    	       
 			      
 			     yr_incr++;
 			  }
 
  			   Criteria criteria_11 = ssn.createCriteria( nav_report_3_stable.class );
  			   criteria_11.add(Restrictions.eq("nav_from_date", crm.getKey().getFrom_date()));  
+ 			  criteria_11.add(Restrictions.eq("Fund_Type",Fund_Type));
 		       criteria_11.add(Restrictions.eq("scheme_Code",crm.getKey().getScheme_code()));
 		       criteria_11.add(Restrictions.eq("comment","12"));
 		           
@@ -126,7 +133,7 @@ public class Calma_Ratio_Main {
 		          }
  		 		 			  			 
  			  
- 			  
+// 			    crm.setFund_Type(Fund_Type);
  			    ssn.save(crm);
 // 			    ssn.getTransaction().commit();
 		        db_save++;
@@ -140,7 +147,7 @@ public class Calma_Ratio_Main {
 		    	  ssn.flush();
 	  		      ssn.clear();
 	  		     
-	  		      db_save=0;
+	  		      db_save=1;
 	  		      
 	  		      System.out.println("Reseting Session...");
 		      }

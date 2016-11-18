@@ -39,139 +39,390 @@ public class test {
 	 * @throws ParseException 
 	 */
 	
-private static Date get_Date_Corrected_New(java.util.Date time) {
-		
-		java.util.Date ddd=time;
-		
-		 if(ddd.getMonth()==0 || ddd.getMonth()==2 || ddd.getMonth()==4 || ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==9 || ddd.getMonth()==11)
-	      {
-	    	   ddd.setDate(31);
-	      }
-	  	  if(ddd.getMonth()==1)
-	      {
-	  	        ddd.setDate(28);
-	  	        
-	      }
-	  	  if(ddd.getMonth()==3 || ddd.getMonth()==5 || ddd.getMonth()==8 || ddd.getMonth()==10)
-	      {
-	  	        ddd.setDate(30);
-	  	        
-	      }	
-	  	  
-		return ddd;
-	}
-	
-	static String get_date(String day, int months, String opr) throws ParseException
-	{
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		  Calendar cal = Calendar.getInstance();
-	      cal.setTime(formatter.parse(day));
-	      months=Math.abs(months);
-	      
-	      if(opr=="add")
-	      {
-//	    	  cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)+months)); 
-	    	  
-	    	  
-	    	  cal.add(Calendar.MONTH,months);
-	      }
-	      else if(opr=="sub")
-	      {
-//	    	  cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)-months));
-	    	  
-	    	  
-	    	  cal.add(Calendar.MONTH,months);
-	      }
-	      
-	      
-	     
-	      
-	      java.util.Date ddd = cal.getTime();
-	      
-	      if(ddd.getMonth()==0 || ddd.getMonth()==2 || ddd.getMonth()==4 || ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==9 || ddd.getMonth()==11)
-	      {
-	    	   ddd.setDate(31);
-	      }
-	      else
-	      {
-	    	   ddd.setDate(30);
-	      }
-	      
-	      
-	      
-//	      SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
-	      String formatted = formatter.format(ddd);
-	      
-	      return formatted;
-	}
-	
-	static ArrayList<nav_hist> get_list_of_dates_db(String day, int scheme_code) throws ParseException
-	{
-			  SimpleDateFormat formatter=null;
-			  java.util.Date date_nav_chk_start=null;
-			  java.util.Date date_nav_chk_end=null;
-			  
-			  ArrayList<nav_hist> lst = new ArrayList<nav_hist>();
-			  Session ssn= HIbernateSession.getSessionFactory().openSession();
-			 
-			  formatter = new SimpleDateFormat("dd/MM/yyyy");
-			  //System.out.println("DATE-FOrmatter-->>"+myDate);
-			  date_nav_chk_start = formatter.parse(day);	   
-			  date_nav_chk_end = new Date(date_nav_chk_start.getTime()-((1000 * 60 * 60 * 24)*5));
-
-			  // date_nav_chk_end = new Date(day.getTime()-((1000 * 60 * 60 * 24)*10));
-			  System.out.println("<<<<<<------------>>>>>>>");
-			  System.out.println("Scheme Code-->"+scheme_code);
-			  System.out.println("Start Date-->"+date_nav_chk_start);
-			  System.out.println("End Date-->"+date_nav_chk_end);
-			  System.out.println("<<<<<<------------>>>>>>>");
-			  
-			  Criteria criteria = ssn.createCriteria(controller.nav_hist.class);
-			  criteria.add(Restrictions.eq("scheme_code",scheme_code)); 
-			  criteria.add(Restrictions.between("nav_date", date_nav_chk_end, date_nav_chk_start));
-      		  criteria.addOrder(org.hibernate.criterion.Order.desc("nav_date"));
-			  lst =(ArrayList<nav_hist>) criteria.list();
-			  
-//			  ssn.getTransaction().commit();
-			  ssn.close();
-		 return lst;
-	}
-	
-	
-	static ArrayList<java.util.Date> get_list_of_dates_portfolio(java.util.Date day, long sc) throws ParseException
-	{
-			  java.util.Date date_nav_chk_end=null;
-			  
-			  ArrayList<java.util.Date> lst = new ArrayList<java.util.Date>();
-			  Session ssn= HIbernateSession.getSessionFactory().openSession();
-			 
-			  
-			  System.out.println("DATE--->>"+day);
+//private static Date get_Date_Corrected_New(java.util.Date time) {
+//		
+//		java.util.Date ddd=time;
+//		
+//		 if(ddd.getMonth()==0 || ddd.getMonth()==2 || ddd.getMonth()==4 || ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==9 || ddd.getMonth()==11)
+//	      {
+//	    	   ddd.setDate(31);
+//	      }
+//	  	  if(ddd.getMonth()==1)
+//	      {
+//	  	        ddd.setDate(28);
+//	  	        
+//	      }
+//	  	  if(ddd.getMonth()==3 || ddd.getMonth()==5 || ddd.getMonth()==8 || ddd.getMonth()==10)
+//	      {
+//	  	        ddd.setDate(30);
+//	  	        
+//	      }	
+//	  	  
+//		return ddd;
+//	}
+//	
+//	static String get_date(String day, int months, String opr) throws ParseException
+//	{
+//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//		  Calendar cal = Calendar.getInstance();
+//	      cal.setTime(formatter.parse(day));
+//	      months=Math.abs(months);
+//	      
+//	      if(opr=="add")
+//	      {
+////	    	  cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)+months)); 
+//	    	  
+//	    	  
+//	    	  cal.add(Calendar.MONTH,months);
+//	      }
+//	      else if(opr=="sub")
+//	      {
+////	    	  cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)-months));
+//	    	  
+//	    	  
+//	    	  cal.add(Calendar.MONTH,months);
+//	      }
+//	      
+//	      
+//	     
+//	      
+//	      java.util.Date ddd = cal.getTime();
+//	      
+//	      if(ddd.getMonth()==0 || ddd.getMonth()==2 || ddd.getMonth()==4 || ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==9 || ddd.getMonth()==11)
+//	      {
+//	    	   ddd.setDate(31);
+//	      }
+//	      else
+//	      {
+//	    	   ddd.setDate(30);
+//	      }
+//	      
+//	      
+//	      
+////	      SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+//	      String formatted = formatter.format(ddd);
+//	      
+//	      return formatted;
+//	}
+//	
+//	static ArrayList<nav_hist> get_list_of_dates_db(String day, int scheme_code) throws ParseException
+//	{
+//			  SimpleDateFormat formatter=null;
+//			  java.util.Date date_nav_chk_start=null;
+//			  java.util.Date date_nav_chk_end=null;
+//			  
+//			  ArrayList<nav_hist> lst = new ArrayList<nav_hist>();
+//			  Session ssn= HIbernateSession.getSessionFactory().openSession();
+//			 
 //			  formatter = new SimpleDateFormat("dd/MM/yyyy");
-//			  System.out.println("DATE-FOrmatter-->>"+myDate);
-//			  date_nav_chk_start = formatter.parse(day);
-			  
-			  date_nav_chk_end = new Date(day.getTime()-((1000 * 60 * 60 * 24)*7));
+//			  //System.out.println("DATE-FOrmatter-->>"+myDate);
+//			  date_nav_chk_start = formatter.parse(day);	   
+//			  date_nav_chk_end = new Date(date_nav_chk_start.getTime()-((1000 * 60 * 60 * 24)*5));
+//
+//			  // date_nav_chk_end = new Date(day.getTime()-((1000 * 60 * 60 * 24)*10));
+//			  System.out.println("<<<<<<------------>>>>>>>");
+//			  System.out.println("Scheme Code-->"+scheme_code);
+//			  System.out.println("Start Date-->"+date_nav_chk_start);
+//			  System.out.println("End Date-->"+date_nav_chk_end);
+//			  System.out.println("<<<<<<------------>>>>>>>");
+//			  
+//			  Criteria criteria = ssn.createCriteria(controller.nav_hist.class);
+//			  criteria.add(Restrictions.eq("scheme_code",scheme_code)); 
+//			  criteria.add(Restrictions.between("nav_date", date_nav_chk_end, date_nav_chk_start));
+//      		  criteria.addOrder(org.hibernate.criterion.Order.desc("nav_date"));
+//			  lst =(ArrayList<nav_hist>) criteria.list();
+//			  
+////			  ssn.getTransaction().commit();
+//			  ssn.close();
+//		 return lst;
+//	}
+//	
+//
+//	
+//	
+//	static ArrayList<java.util.Date> get_list_of_dates_portfolio(java.util.Date day, long sc) throws ParseException
+//	{
+//			  java.util.Date date_nav_chk_end=null;
+//			  
+//			  ArrayList<java.util.Date> lst = new ArrayList<java.util.Date>();
+//			  Session ssn= HIbernateSession.getSessionFactory().openSession();
+//			 
+//			  
+//			  System.out.println("DATE--->> "+day);
+////			  formatter = new SimpleDateFormat("dd/MM/yyyy");
+////			  System.out.println("DATE-FOrmatter-->>"+myDate);
+////			  date_nav_chk_start = formatter.parse(day);
+//			  
+//			  date_nav_chk_end = new Date(day.getTime()-((1000 * 60 * 60 * 24)*7));
+//			 
+//			  ProjectionList projList = Projections.projectionList();
+//			  projList.add(Projections.property("inv_date"));
+//			  
+//			  Criteria criteria = ssn.createCriteria(controller.Mf_portfolio_Model.class);
+//			  criteria.add(Restrictions.eq("scheme_code",sc)); 
+//			  criteria.add(Restrictions.between("inv_date", date_nav_chk_end, day));
+//			  criteria.setProjection(Projections.distinct(projList));
+//			  criteria.addOrder(org.hibernate.criterion.Order.desc("inv_date"));
+//			  
+//      		  lst =(ArrayList<java.util.Date>) criteria.list();
+//			  
+////			  ssn.getTransaction().commit();
+//			  ssn.close();
+//		 return lst;
+//	}
+//	
+	
+	
+	public static long Check_for_Portfolio(long scheme_code, Session ssn , String code_type)
+	{
+		 ArrayList<Long> schm_cd= (ArrayList<Long>) ssn.createQuery("select count(*) from Mf_portfolio_New where scheme_code='"+scheme_code+"'").list();
+		 long scheme_code_to_return=0;
+		 
+		 
+		 if(schm_cd.get(0)>0)
+		 {
+//			 System.out.println("coming here.......");
+			 scheme_code_to_return = scheme_code;
 			 
-			  ProjectionList projList = Projections.projectionList();
-			  projList.add(Projections.property("inv_date"));
-			  
-			  Criteria criteria = ssn.createCriteria(controller.Mf_portfolio_Model.class);
-			  criteria.add(Restrictions.eq("scheme_code",sc)); 
-			  criteria.add(Restrictions.between("inv_date", date_nav_chk_end, day));
-			  criteria.setProjection(Projections.distinct(projList));
-			  criteria.addOrder(org.hibernate.criterion.Order.desc("inv_date"));
-			  
-      		  lst =(ArrayList<java.util.Date>) criteria.list();
-			  
-//			  ssn.getTransaction().commit();
-			  ssn.close();
-		 return lst;
+		 }
+		 else 
+		 {
+//			 System.out.println("coming here.......");
+			 if(!code_type.equals("PRIMARY_FD_CODE"))
+			 {
+//				 System.out.println("coming here toooo.......");
+		        ArrayList<Long> pri_fd_cd = (ArrayList<Long>) ssn.createQuery("select PRIMARY_FD_CODE from Scheme_Detail where scheme_code='"+scheme_code+"' ").list();
+		         if(pri_fd_cd.size()>0)
+		         {
+		        	 scheme_code_to_return =  Check_for_Portfolio(pri_fd_cd.get(0),ssn,"PRIMARY_FD_CODE");
+		        	 
+		        	 
+		         }
+		         
+			 }
+		 }
+		return scheme_code_to_return;
 	}
 	
+	
+	
+	
+	
+	
+	
+	public static List<java.util.Date> getDates(long s_code, Session ssn , java.util.Date next_qtr_dt) throws ParseException
+	{
+		List<java.util.Date> dd_final=null;
+//		Session ssn=null;
+//		ssn = HIbernateSession.getSessionFactory().openSession(); 
+	    
+//		ssn.beginTransaction();
+	  	
+		if(next_qtr_dt==null)
+		{
+			System.out.println("IN NULLL CASE");
+			
+			Criteria criteria_1 = ssn.createCriteria(nav_hist.class );
+			criteria_1.setProjection( Projections.distinct(Projections.property("nav_date")));  		
+	  		criteria_1.add(Restrictions.eq("scheme_code",(int) s_code));
+	  		criteria_1.addOrder(Order.asc("nav_date"));
+	  		criteria_1.setMaxResults(1);
+	  		
+	  		// NEW ADDED 
+	  		List<java.util.Date> dd = criteria_1.list(); 
+	           
+	  		if(dd.size()==0)
+	  		{
+	  			
+	  			System.out.println("COMING HERE IN THE no DTA LIST(==NULL)");
+	  			dd_final=null;
+	  			
+	  		}
+	  		else if(dd.size()>0)
+	  		{
+	  	  		java.util.Date ddd = dd.get(0);         		
+	  	  		
+			  	  if(ddd.getMonth()==0 || ddd.getMonth()==1 || ddd.getMonth()==2)
+			      {
+			    	   ddd.setDate(31);
+			    	   ddd.setMonth(2);
+			      }
+			  	  if(ddd.getMonth()==3 || ddd.getMonth()==4 || ddd.getMonth()==5)
+			      {
+			  	        ddd.setDate(30);
+			  	        ddd.setMonth(5);
+			      }
+			  	  if(ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==8)
+			      {
+			  	        ddd.setDate(30);
+			  	        ddd.setMonth(8);
+			      }
+			  	  if(ddd.getMonth()==9 || ddd.getMonth()==10 || ddd.getMonth()==11)
+			      {
+				        ddd.setDate(31);
+				        ddd.setMonth(11);
+			      }
+//	        System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
+//		  	  System.out.println("FInal Date Prepared-->>"+ddd);
+//			  System.out.println("Scheme_code-->>"+s_code);	  
+//			  System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
+			  
+			  
+			  
+			  	List<nav_hist> nv_dt_lst = avg_return_2_main.get_list_of_dates_db(ddd, (int) s_code, ssn);		  	  
+		        
+			  	
+//			  	   System.out.println("Got value @ Date-->>"+nv_dt_lst.get(0));
+			  	if(nv_dt_lst.size()==0)
+			  	{
+			  		dd_final=null;
+			  		
+			  		
+			  		ArrayList<Date> first_dt = (ArrayList<Date>) ssn.createQuery("select distinct(nav_date) from nav_hist_full where scheme_code='"+s_code+"'").list();
+					java.util.Date ddd_1 = first_dt.get(0);
+			
+					if(ddd_1.getMonth()==0 || ddd_1.getMonth()==1 || ddd_1.getMonth()==2)
+				      {
+						ddd_1.setDate(31);
+						ddd_1.setMonth(2);
+				      }
+				  	  if(ddd_1.getMonth()==3 || ddd_1.getMonth()==4 || ddd_1.getMonth()==5)
+				      {
+				  		ddd_1.setDate(30);
+				  		ddd_1.setMonth(5);
+				      }
+				  	  if(ddd_1.getMonth()==6 || ddd_1.getMonth()==7 || ddd_1.getMonth()==8)
+				      {
+				  		ddd_1.setDate(30);
+				  		ddd_1.setMonth(8);
+				      }
+				  	  if(ddd_1.getMonth()==9 || ddd_1.getMonth()==10 || ddd_1.getMonth()==11)
+				      {
+				  		ddd_1.setDate(31);
+				  		ddd_1.setMonth(11);
+				      }
+		  			
+		  			dd_final = getDates(s_code,ssn,ddd);
+			  		
+			  		
+			  	}
+			  	else
+			  	{
+			  		dd_final = new ArrayList<java.util.Date>();
+				  	
+				  	dd_final.add(nv_dt_lst.get(0).getNav_date());
+			  	}
+			  	
+			  	
+	  		}
+		}
+		else
+		{
+			Calendar cal = Calendar.getInstance();	  	  
+		  	  
+		  	  cal.setTime(next_qtr_dt);
+//		      cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)+3));
+		      cal.add(Calendar.MONTH,3);
+		      Date ddd = cal.getTime();
+		      
+		      
+		       
+		  	List<nav_hist> nv_dt_lst = avg_return_2_main.get_list_of_dates_db(ddd, (int) s_code, ssn);		  	  
+	        
+		  	
+//		  	   System.out.println("Got value @ Date-->>"+nv_dt_lst.get(0));
+		  	if(nv_dt_lst.size()==0)
+		  	{
+		  		dd_final=null;
+		  		
+		  	}
+		  	else
+		  	{
+		  		dd_final = new ArrayList<java.util.Date>();
+			  	
+			  	dd_final.add(nv_dt_lst.get(0).getNav_date());
+		  	}
+		      
+		  	  
+			
+		}
+		
+		
+		  
+  		
+  		
+//  		ssn.close();
+  		
+  		ssn.getTransaction().commit();
+  		ssn.beginTransaction();
+  		
+  		return dd_final;
+  		
+	}
+	
+	
+	
+	// main function...///
 	
 	public static void main(String[] args) throws ParseException {
 	
+		
+		Session ssn = HIbernateSession.getSessionFactory().openSession();
+		ssn.beginTransaction();
+		
+		
+		System.out.println("Print----->>");
+		System.out.println((getDates(7615, ssn, null)).get(0));
+		
+		
+//		
+//		long schm_code=0,res;
+//		
+//		schm_code=3269;
+//		
+//		res = Check_for_Portfolio(schm_code, ssn, "SCHEME_CODE");
+//		
+//		System.out.println("Scheme_Code--->>>"+res);
+		
+		
+//				
+//		ArrayList<Long> max_id_lst =  (ArrayList<Long>) ssn.createQuery("select MAX(id) from Scheme_Aum").list();
+//				
+//		System.out.println("MAX-ID>"+max_id_lst.get(0));
+//		ssn.close();
+		
+		
+		
+//		ArrayList<Long> scheme_code_lst = new ArrayList<Long>();
+//		String Fund_Type="EQUITY_SML";
+//		
+////		System.out.println("select DISTINCT(scheme_Code) from avg_return where Fund_Type='"+Fund_Type+"'");
+//		
+////		scheme_code_lst = (ArrayList<Long>) ssn.createQuery("select DISTINCT(scheme_Code)from avg_return where key.Fund_Type='"+Fund_Type+"'").list();
+//
+//		Criteria criteria_1 = ssn.createCriteria( Avg_ret_Model.class );
+//		criteria_1.setProjection( Projections.distinct(Projections.property("key.scheme_code")));
+//		criteria_1.add(Restrictions.eq("key.Fund_Type", Fund_Type));
+// 		criteria_1.addOrder(Order.asc("key.scheme_code"));
+//		
+// 		scheme_code_lst = (ArrayList<Long>) criteria_1.list();
+//		
+//		System.out.println("LIST SIze-->>"+scheme_code_lst.size());
+//		
+//		
+//		for(Long bbb : scheme_code_lst)
+//		{
+//			System.out.println(bbb);
+//		}
+		
+		ssn.close();
+		
+//		while(true)
+//		{
+//			System.out.println("Run...");
+//		}
+		
+		
 //		int retval;
 //		double temp_val_hldr=-9999;
 //		int rank_hldr=0;
@@ -248,29 +499,30 @@ private static Date get_Date_Corrected_New(java.util.Date time) {
 		
 //		System.out.println(mm2.compareTo(nnn));
 		 	
+//--------------------------------------------------------------------------------------------------------------------------------		
+//		Session ssn = HIbernateSession.getSessionFactory().openSession();
+//		ssn.beginTransaction();
+//		
+//		 nav_hist current_nav_obj= ssn.get(nav_hist.class,(long)4007);
+//		
+//		
+//		 
+//		ArrayList<nav_hist> dt_lst_last_50_days  = (ArrayList<nav_hist>) ssn.createQuery("from nav_hist_full where nav_date<=? and scheme_code=? order by nav_date desc").setDate(0,current_nav_obj.getNav_date()).setLong(1,current_nav_obj.getScheme_code()).setMaxResults(50).list();
+//		
+//		if(dt_lst_last_50_days.size()>0)
+//		{ 
+//			for(nav_hist ob :  dt_lst_last_50_days)
+//			 {
+//				 System.out.println("Objects ID-->>"+ob.getId());
+//				 System.out.println("Objects NAV-->>"+ob.getAdjnavrs());
+//				 System.out.println("Objects DATE-->>"+ob.getNav_date());
+//			 }
+//		}
+//		 
+//		
+//		ssn.close();
 		
-		Session ssn = HIbernateSession.getSessionFactory().openSession();
-		ssn.beginTransaction();
-		
-		 nav_hist current_nav_obj= ssn.get(nav_hist.class,(long)4007);
-		
-		
-		 
-		ArrayList<nav_hist> dt_lst_last_50_days  = (ArrayList<nav_hist>) ssn.createQuery("from nav_hist_full where nav_date<=? and scheme_code=? order by nav_date desc").setDate(0,current_nav_obj.getNav_date()).setLong(1,current_nav_obj.getScheme_code()).setMaxResults(50).list();
-		
-		if(dt_lst_last_50_days.size()>0)
-		{ 
-			for(nav_hist ob :  dt_lst_last_50_days)
-			 {
-				 System.out.println("Objects ID-->>"+ob.getId());
-				 System.out.println("Objects NAV-->>"+ob.getAdjnavrs());
-				 System.out.println("Objects DATE-->>"+ob.getNav_date());
-			 }
-		}
-		 
-		
-		ssn.close();
-		
+//--------------------------------------------------------------------------------------------------------------------------------		
 		
 		
 //		Session ssn = HIbernateSession.getSessionFactory().openSession(); 

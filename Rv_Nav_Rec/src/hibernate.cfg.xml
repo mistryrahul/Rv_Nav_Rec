@@ -20,7 +20,7 @@
         <property name="connection.password">admin123</property>
 
         <!-- JDBC connection pool (use the built-in) -->
-        <property name="connection.pool_size">15</property>
+        <property name="connection.pool_size">30</property>
 
         <!-- SQL dialect -->
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
@@ -29,7 +29,7 @@
         <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
 
         <!-- Echo all executed SQL to stdout -->
-        <property name="show_sql">false</property>
+        <property name="show_sql">true</property>
   
          <!-- For Batch Insert -->
         <property name="hibernate.jdbc.batch_size">50</property>
@@ -43,7 +43,7 @@
 
         <!-- Names the annotated entity class -->
         <mapping class="controller.nav_hist"/>
-        <mapping class="controller.nav_report"/>
+       <!-- <mapping class="controller.nav_report"/> -->
         <mapping class="controller.nav_report_temp_1"/>
         <mapping class="controller.nav_report_3_stable"/> 
         <mapping class="controller.Avg_ret_Model"/>
@@ -73,7 +73,10 @@
         <mapping class="controller.Benchmark_Hist"/> 
         <mapping class="controller.Industry_Master"/> 
         <mapping class="controller.Index_Master"/> 
-        <mapping class="controller.PmCap"/>
+        <mapping class="controller.PmCap"/> 
+        <mapping class="controller.Portfolio_SML_Report_Model"/>
+        <!-- <mapping class="controller.nav_hist_updater"/> --> 
+        <mapping class="controller.Mf_portfolio_New"/> 
         <!-- Debt -->
         <mapping class="debt_Controller.Avg_maturity"/>
         <mapping class="debt_Controller.Credit_rating_sum_groups"/>

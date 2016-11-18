@@ -8,8 +8,8 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
 
-@Entity(name="nav_hist_full_test" )
-//@Entity(name="nav_hist_full" )
+//@Entity(name="nav_hist_full_test" )
+@Entity(name="nav_hist_full" )
 public class nav_hist implements Serializable
 {
 	

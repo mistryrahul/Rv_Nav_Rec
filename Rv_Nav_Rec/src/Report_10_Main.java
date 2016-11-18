@@ -26,6 +26,7 @@ public class Report_10_Main {
 	 */
 	public static void main(String[] args) {
 	
+		String Fund_Type;
 		java.util.Date temp_dt=null;
 		Report_10_Model rtm = null;
 		Report_6_pk pk_6 =null;
@@ -48,6 +49,15 @@ public class Report_10_Main {
 //		java.util.Date dd_200=null;
 		
 		
+		
+		
+		// Type of fund is responsible for selecting appropriate scheme codes  
+//	    Fund_Type="EQUITY_ELSS"; // This field is mandatory //
+		Fund_Type="EQUITY_SML"; // This field is mandatory //
+	    
+	    
+		
+		
 //		 Calendar cal_1 = Calendar.getInstance();
 //		 Calendar cal_2 = Calendar.getInstance();
 		 
@@ -59,7 +69,7 @@ public class Report_10_Main {
 			    
 //			   ArrayList<Custom_Merged_Report_W_Rank> quarter_list = (ArrayList<Custom_Merged_Report_W_Rank>) ssn.createQuery("from Custom_Merged_Report_W_Rank order by scheme_code").list();
               
-			   ArrayList<Avg_ret_Model> quarter_list = (ArrayList<Avg_ret_Model>) ssn.createQuery("from avg_return order by scheme_code").list();
+			   ArrayList<Avg_ret_Model> quarter_list = (ArrayList<Avg_ret_Model>) ssn.createQuery("from avg_return where key.Fund_Type='"+Fund_Type+"' and scheme_code=7615 order by scheme_code").list();
 			   
 			   
 			   
@@ -72,6 +82,7 @@ public class Report_10_Main {
 					   
 					   pk_6.setFrom_date(cmrwr.getKey().getStart_dt());
 					   pk_6.setScheme_code(cmrwr.getKey().getScheme_code());
+					   pk_6.setFund_Type(Fund_Type);
 					   
 					   rtm.setKey(pk_6);
 					   
@@ -142,7 +153,7 @@ public class Report_10_Main {
 			    	   }
 				      
 			    	   
-			    	   Query q33 =  ssn.createQuery("from nav_report_temp_1 where scheme_code=? and date_ori=?").setLong(0, current_nav_obj.getScheme_code()).setDate(1,current_nav_obj.getNav_date());
+			    	   Query q33 =  ssn.createQuery("from nav_report_temp_1 where key.scheme_code=? and key.date_ori=? and key.Fund_Type='"+Fund_Type+"'").setLong(0, current_nav_obj.getScheme_code()).setDate(1,current_nav_obj.getNav_date());
 						 
 						 
 						 ArrayList<nav_report_temp_1> nav_rem_tmp_lst = (ArrayList<nav_report_temp_1>) q33.list();

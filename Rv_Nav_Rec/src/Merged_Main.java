@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import controller.Avg_ret_Model;
 import controller.Calma_Ratio_Model;
 import controller.ExpenceRatio;
+import controller.Mf_portfolio_New;
 import controller.Report_10_Model;
 import controller.Report_5_Model;
 import controller.Report_6_Model;
@@ -35,15 +36,35 @@ public class Merged_Main {
 	 */
 	public static void main(String[] args) throws ParseException 
 	{
-	    
-		 int i=0;
+	     String Fund_Type;
+		 int i=1;
 		 Session ssn = HIbernateSession.getSessionFactory().openSession(); 
 		 ssn.beginTransaction();	
 		
+	     // Type of fund is responsible for selecting appropriate scheme codes  
+//         Fund_Type="EQUITY_ELSS"; // This field is mandatory
+		 Fund_Type="EQUITY_SML"; // This field is mandatory
 		 
+		  
+		                                                //         // If required to done MANUALY for some scheme_Code  
+														//		  ArrayList<Long> scheme_code_list_temp = new ArrayList<Long>();
+														//		    
+														//	         long[] schm_cd_lst = {23,407,447,489,716,748,758,903,905,931,933,942,950,1131,1273,1282,1283,1284,1331,1346,1348,1441,1464,1492,1608,1623,1849,1858,1956,1962,1973,2069,2090,2127,2129,2133,2171,2235,2271,2384,2390,2455,2461,2654,2669,2681,2711,2752,2782,2860,2896,3065,3247,3249,3281,3305,3317,3461,3581,3587,3626,3641,3644,4282,4457,4980,5153,6075,7329,7615,7747,7785,7841,7870,7874,8151,8217,8229,8250,8463,9078,9240,11889,12836,12860,12865,14493,14559,15557,16672,16706,21293,21769,24776,25378,25473,25995,26481,26778,27106,27775,28707,29082,29277,29359,29360,29424,29786,30021,30022,30395,30396,30397,31046,31353,31451,31571,31642,31837,32280,32348,32542,32658,33053,35321};
+														//	         
+														//	         for(long b : schm_cd_lst)
+														//	         {
+														//	        	 scheme_code_list_temp.add(b);
+														//	         }
+														//		 
+														//		 String hql_mn="from avg_return where key.Fund_Type='"+Fund_Type+"' and key.scheme_code IN :list order by scheme_code";
+		 												//        Query q1 = ssn.createQuery(hql_mn).setParameterList("list", scheme_code_list_temp); 
 		 
-		 String hql_mn="from avg_return where start_dt>='2003-06-30' and start_dt<='2015-03-31' order by scheme_code";
+         String hql_mn="from avg_return where key.Fund_Type='"+Fund_Type+"' order by scheme_code";
+//		 String hql_mn="from avg_return where start_dt>='2003-06-30' and start_dt<='2015-03-31' order by scheme_code";
 		 Query q1 = ssn.createQuery(hql_mn);
+		 
+//		 Query q1 = ssn.createQuery(hql_mn)
+				 
 		 ArrayList<Avg_ret_Model> avg_ret_main_list = (ArrayList<Avg_ret_Model>) q1.list();
 		 
 		 Report_Merged_5_6_8_Model rm568 = null;
@@ -56,6 +77,7 @@ public class Merged_Main {
 				     
 				     pk.setFrom_date(arm.getKey().getStart_dt());
 				     pk.setScheme_code(arm.getKey().getScheme_code());
+				     pk.setFund_Type(Fund_Type);
 				     
 				     rm568.setKey(pk);
 				     				     				     
@@ -63,13 +85,14 @@ public class Merged_Main {
 //					 criteria_2.add(Restrictions.eq("date_ori",arm.getKey().getStart_dt()));
 //					 criteria_2.add(Restrictions.eq("scheme_code",arm.getKey().getScheme_code()));
 				     
-				     Query q33 =  ssn.createQuery("from nav_report_temp_1 where scheme_code=? and date_ori=?").setLong(0, arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt());
+				     Query q33 =  ssn.createQuery("from nav_report_temp_1 where key.scheme_code=? and key.date_ori=? and key.Fund_Type='"+Fund_Type+"'").setLong(0, arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt());
 					 
 					 
 					 ArrayList<nav_report_temp_1> nav_rem_tmp_lst = (ArrayList<nav_report_temp_1>) q33.list();
 					 
 					  if(nav_rem_tmp_lst.size()>0)
 					  {
+						   rm568.setForwar_36_mnths(nav_rem_tmp_lst.get(0).getRet_mnth_36_forwd());
 						   rm568.setForwar_12_mnths(nav_rem_tmp_lst.get(0).getRet_mnth_12_forwd());
 						   
 						   rm568.setForwar_18_mnths(nav_rem_tmp_lst.get(0).getRet_mnth_18_forwd());
@@ -95,7 +118,7 @@ public class Merged_Main {
 //					  criteria_3.add(Restrictions.eq("day",arm.getKey().getStart_dt()));
 //					  criteria_3.add(Restrictions.eq("scheme_code",arm.getKey().getScheme_code()));
 					     
-					  Query q34 =  ssn.createQuery("from Report_5_Model where scheme_code=? and day=?").setLong(0, arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt()); 
+					  Query q34 =  ssn.createQuery("from Report_5_Model where scheme_code=? and day=? and Fund_Type='"+Fund_Type+"'").setLong(0, arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt()); 
 					  
 					   ArrayList<Report_5_Model> report_5_lst = (ArrayList<Report_5_Model>) q34.list();
 						  
@@ -112,7 +135,7 @@ public class Merged_Main {
 //					   criteria_4.add(Restrictions.eq("from_date",arm.getKey().getStart_dt()));
 //					   criteria_4.add(Restrictions.eq("scheme_code",arm.getKey().getScheme_code()));
 						
-					      Query q35 =  ssn.createQuery("from Report_6_Model where scheme_code=? and from_date=?").setLong(0, arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt());    
+					      Query q35 =  ssn.createQuery("from Report_6_Model where key.scheme_code=? and key.from_date=? and key.Fund_Type='"+Fund_Type+"'").setLong(0, arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt());    
 					      
 					   ArrayList<Report_6_Model> report_6_lst = (ArrayList<Report_6_Model>) q35.list();  
 					   
@@ -137,19 +160,19 @@ public class Merged_Main {
 					   }
 					   
 					   
-					   Query q3 =  ssn.createQuery("from Report_8_Model where scheme_code=? and from_date=?").setLong(0, arm.getKey().getScheme_code()).setDate(1, get_Date_Corrected(arm.getKey().getStart_dt()));
-					   
-					   ArrayList<Report_8_Model> r8m_lst = (ArrayList<Report_8_Model>) q3.list();
-					    
-					   
-					   if(r8m_lst.size()>0)
-					   {
-						   for(Report_8_Model r8m :r8m_lst)
-					          {
-					        	  rm568.setCri(r8m.getGen_rank());
-					        	  rm568.setNo_of_stock(r8m.getNo_of_stock());
-					          }
-					   }
+//					   Query q3 =  ssn.createQuery("from Report_8_Model where scheme_code=? and from_date=? and Fund_Type='"+Fund_Type+"'").setLong(0, arm.getKey().getScheme_code()).setDate(1, get_Date_Corrected(arm.getKey().getStart_dt()));
+//					   
+//					   ArrayList<Report_8_Model> r8m_lst = (ArrayList<Report_8_Model>) q3.list();
+//					    
+//					   
+//					   if(r8m_lst.size()>0)
+//					   {
+//						   for(Report_8_Model r8m :r8m_lst)
+//					          {
+//					        	  rm568.setCri(r8m.getGen_rank());
+//					        	  rm568.setNo_of_stock(r8m.getNo_of_stock());
+//					          }
+//					   }
 					          
 					   
 					   java.util.Date dd_qtr=arm.getKey().getStart_dt();
@@ -183,7 +206,7 @@ public class Merged_Main {
 			 			 
 						   if(tmp_ddt_lst.size()>0)
 						   {
-							   Query q1_calmar =  ssn.createQuery("from Calma_Ratio_Model where scheme_code=? and from_date=?").setLong(0, arm.getKey().getScheme_code()).setDate(1,tmp_ddt_lst.get(0));
+							   Query q1_calmar =  ssn.createQuery("from Calma_Ratio_Model where key.scheme_code=? and key.from_date=? and key.Fund_Type='"+Fund_Type+"'").setLong(0, arm.getKey().getScheme_code()).setDate(1,tmp_ddt_lst.get(0));
 							   
 							   ArrayList<Calma_Ratio_Model> crm_lst = (ArrayList<Calma_Ratio_Model>) q1_calmar.list();
 							    
@@ -208,7 +231,7 @@ public class Merged_Main {
 						   
 						  ArrayList<nav_hist> dt_lst_r10 = get_list_of_dates_db_nw( arm.getKey().getStart_dt(), (int)arm.getKey().getScheme_code());
 						   
-						  ArrayList<Report_10_Model> r_10_lst = (ArrayList<Report_10_Model>) ssn.createQuery("from Report_10_Model where scheme_code=? and from_date=?").setLong(0,dt_lst_r10.get(0).getScheme_code()).setDate(1, dt_lst_r10.get(0).getNav_date()).list();
+						  ArrayList<Report_10_Model> r_10_lst = (ArrayList<Report_10_Model>) ssn.createQuery("from Report_10_Model where key.scheme_code=? and key.from_date=? and key.Fund_Type='"+Fund_Type+"'").setLong(0,dt_lst_r10.get(0).getScheme_code()).setDate(1, dt_lst_r10.get(0).getNav_date()).list();
 						   
 						   
 						   if(r_10_lst.size()>0)
@@ -234,25 +257,54 @@ public class Merged_Main {
 				    }
 						   
 				      
-				    ArrayList<Scheme_Aum> sc_aum_obj = (ArrayList<Scheme_Aum>) ssn.createQuery("from Scheme_Aum where scheme_code=? and day=?").setLong(0,arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt()).list(); 
-						   
-				    if(sc_aum_obj.size()>0)
+//				    ArrayList<Scheme_Aum> sc_aum_obj = (ArrayList<Scheme_Aum>) ssn.createQuery("from Scheme_Aum where scheme_code=? and day=?").setLong(0,arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt()).list(); 
+//						   
+//				    if(sc_aum_obj.size()>0)
+//				    {
+//				    	rm568.setSc_aum(sc_aum_obj.get(0).getExfof());
+//				    }
+					
+				    
+				    
+//				    *******
+				    // need to DONE (if any data does not exist, check with its PRIMARY_FD_CODE in the portfolio table)
+				    // FETCHING AUM FROM MF_PORTFOLIO
+				    
+				    ArrayList<Mf_portfolio_New> mf_pf_m = (ArrayList<Mf_portfolio_New>) ssn.createQuery("from Mf_portfolio_New where scheme_code=? and invdate=?").setLong(0,arm.getKey().getScheme_code()).setDate(1,arm.getKey().getStart_dt()).setMaxResults(1).list();
+				    
+				    if(mf_pf_m.size()>0)
 				    {
-				    	rm568.setSc_aum(sc_aum_obj.get(0).getExfof());
+				    	rm568.setSc_aum(mf_pf_m.get(0).getAum()/100);
 				    }
-					   
+				    else
+				    {
+				    	ArrayList<Long> primary_fd_code = (ArrayList<Long>) ssn.createQuery("select PRIMARY_FD_CODE from Scheme_Detail where scheme_code='"+arm.getKey().getScheme_code()+"'").list();
+				    	if(primary_fd_code.size()>0)
+				    	{
+				    		mf_pf_m = (ArrayList<Mf_portfolio_New>) ssn.createQuery("from Mf_portfolio_New where scheme_code=? and invdate=?").setLong(0,primary_fd_code.get(0)).setDate(1,arm.getKey().getStart_dt()).setMaxResults(1).list();
+				    		
+				    		if(mf_pf_m.size()>0)
+						    {
+						    	rm568.setSc_aum(mf_pf_m.get(0).getAum()/100);
+						    }
+				    	}
+				    }
+				    
+				    
+				    
+//				       rm568.setFund_Type(Fund_Type);
 					   ssn.save(rm568);
 					   i++;
 					   
 					   
-						if(i%500==0)
+						if(i%50==0)
 						{
 							  ssn.getTransaction().commit(); 
 							  ssn.beginTransaction();
 							  ssn.flush();
 						      ssn.clear();
 						    
-						      i=0;
+						      i=1;
 						}			
 					  
 					  

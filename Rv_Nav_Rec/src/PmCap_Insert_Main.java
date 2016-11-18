@@ -17,7 +17,7 @@ public class PmCap_Insert_Main {
 
 	public static void main(String[] args) 
 	{
-		double db_save=0;
+		double db_save=1;
 		String scheme_cd="", dt="", amc_cd="" , ex_ratio=""; 
 		java.util.Date dd,dd_1,dd_2;
 		int save_flg=1;
@@ -31,7 +31,7 @@ public class PmCap_Insert_Main {
 		try
 		{
 		  	
-		LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/pmcap.ace"), "UTF-8");
+		LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/pmcap_sept_oct_20.ace"), "UTF-8");
 //		LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/Scheme_details_full.ace"), "UTF-8");
 
 		

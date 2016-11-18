@@ -20,6 +20,13 @@ import controller.nav_hist;
 import controller.nav_report;
 
 
+
+/////////////////(DEPRICATED)/////////////////////////
+// this method is no longer used/////
+
+
+
+
 public class nav_report_main {
 
 	static List<nav_hist> check_db(java.util.Date dt , int scheme_code, Session ssn)

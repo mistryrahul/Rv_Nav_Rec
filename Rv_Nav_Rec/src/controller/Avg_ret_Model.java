@@ -17,6 +17,7 @@ public class Avg_ret_Model
    int rank;
    
    
+   
       
 public int getRank() {
 	return rank;
@@ -53,5 +54,6 @@ public int getReturn_value() {
 }
 public void setReturn_value(int return_value) {
 	this.return_value = return_value;
-}	
+}
+
 }

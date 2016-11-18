@@ -11,6 +11,8 @@ public class Custom_Merged_Report_W_Rank
 
 	   // Quarter 
 	   String quarter;
+	  
+	   
 	   
 	  // nav_report_final;
 	   	   
@@ -20,6 +22,9 @@ public class Custom_Merged_Report_W_Rank
 	   int R_forwar_12_mnths;
 	   double forwar_18_mnths;
 	   int R_forwar_18_mnths;
+	   double forwar_36_mnths;
+	   int R_forwar_36_mnths;
+	   
 	   // nav_report_final;
 	   
 	   double backward_3;
@@ -616,6 +621,18 @@ public class Custom_Merged_Report_W_Rank
 	}
 	public void setSc_aum(double sc_aum) {
 		this.sc_aum = sc_aum;
+	}
+	public double getForwar_36_mnths() {
+		return forwar_36_mnths;
+	}
+	public void setForwar_36_mnths(double forwar_36_mnths) {
+		this.forwar_36_mnths = forwar_36_mnths;
+	}
+	public int getR_forwar_36_mnths() {
+		return R_forwar_36_mnths;
+	}
+	public void setR_forwar_36_mnths(int r_forwar_36_mnths) {
+		R_forwar_36_mnths = r_forwar_36_mnths;
 	}  
 	
 	

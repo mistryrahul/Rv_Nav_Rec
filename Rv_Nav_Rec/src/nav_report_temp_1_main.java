@@ -21,12 +21,13 @@ import controller.*;
 public class nav_report_temp_1_main 
 {
 
-	public static void Save_Records_DB(java.util.Date dt , long sch_code , Session ssn )
+	public static void Save_Records_DB(java.util.Date dt , long sch_code , Session ssn , String Fund_Type )
 	{
 		
 		Criteria criteria_1 = ssn.createCriteria( nav_report_3_stable.class );
 //	    criteria_1.setProjection( Projections.distinct(Projections.property("nav_from_date")));  		
     	criteria_1.add(Restrictions.eq("scheme_Code", sch_code));
+    	criteria_1.add(Restrictions.eq("Fund_Type", Fund_Type));
     	criteria_1.add(Restrictions.eq("nav_from_date", dt));
 		
     	List<nav_report_3_stable> fin_lst = criteria_1.list();
@@ -79,6 +80,7 @@ public class nav_report_temp_1_main
 		
 		
 		
+		ob_ts_pk.setFund_Type(Fund_Type);
 		
 		ob_ts.setKey(ob_ts_pk);
 		
@@ -129,6 +131,10 @@ public class nav_report_temp_1_main
     		{
     			ob_ts.setRet_mnth_36(ob.getNav_value());
     		}
+    		else if(Integer.parseInt(ob.getComment())==36 ) // forward 36 months
+    		{
+    			ob_ts.setRet_mnth_36_forwd(ob.getNav_value());
+    		}
     		else if(Integer.parseInt(ob.getComment())==-42 )
     		{
     			ob_ts.setRet_mnth_42(ob.getNav_value());
@@ -158,14 +164,15 @@ public class nav_report_temp_1_main
 	
 	
 	
-	public static void Get_Dates(long sch_code)
+	public static void Get_Dates(long sch_code, String Fund_Type)
 	{
 		Session ssn=null;
 		ssn= HIbernateSession.getSessionFactory().openSession();
 		ssn.beginTransaction();
 		
 		Criteria criteria_1 = ssn.createCriteria( nav_report_3_stable.class );
-	    criteria_1.setProjection( Projections.distinct(Projections.property("nav_from_date")));  		
+	    criteria_1.setProjection( Projections.distinct(Projections.property("nav_from_date")));
+	    criteria_1.add(Restrictions.eq("Fund_Type", Fund_Type));
     	criteria_1.add(Restrictions.eq("scheme_Code", sch_code));
 		criteria_1.addOrder(Order.asc("nav_from_date"));
 	
@@ -173,7 +180,7 @@ public class nav_report_temp_1_main
 		
 		for(java.util.Date dt : dt_lst)
         {
-		    Save_Records_DB(dt,sch_code,ssn);        	 
+		    Save_Records_DB(dt,sch_code,ssn,Fund_Type);        	 
 //        	Query query = ssn.createQuery("from controller.nav_report_3_stable where scheme_code"+sch_code+" and nav_from_date"+dt+" order by scheme_code,id");	
         }
 		 
@@ -191,7 +198,7 @@ public class nav_report_temp_1_main
 		
 //		Generate_rank();
 		
-		
+		String Fund_Type;
 		Session ssn = null;
 		int i=0,db_flag=0;
 		long scheme_code_temp=0;
@@ -200,6 +207,11 @@ public class nav_report_temp_1_main
 		
 		try
 		{
+			 // Type of fund is responsible for selecting appropriate scheme codes  
+//		    Fund_Type="EQUITY_ELSS"; // This field is mandatory //
+			 Fund_Type="EQUITY_SML"; // This field is mandatory //
+			
+			
 			SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
 			ssn = sessionfactry.openSession();
 //			ssn.beginTransaction();
@@ -213,20 +225,24 @@ public class nav_report_temp_1_main
 //	  		criteria_1.addOrder(Order.asc("nav_from_date"));
 			
 			
-			List<Long> results = ssn.createCriteria( nav_report_3_stable.class ).setProjection( Projections.distinct(Projections.property("scheme_Code"))).list();
+			List<Long> results = ssn.createCriteria( nav_report_3_stable.class ).setProjection( Projections.distinct(Projections.property("scheme_Code"))).add(Restrictions.eq("Fund_Type", Fund_Type)).list();
+			
+//			List<Long> results = new ArrayList<Long>();
+//			results.add((long)7615);
+			
 			ssn.close(); // closing session
 		    
 		    for(long sch_cd : results)
 		    {
 		    	
 		    	
-		    	Get_Dates(sch_cd);
+		    	Get_Dates(sch_cd,Fund_Type);
 		    	
 		    }
 		    
 		    System.out.println("<---COMPLETE MAKING REPORT--->");
 		    System.out.println("<----Started Caculating Rank---->");
-		    Generate_rank();
+		    Generate_rank(Fund_Type);
 		    
 		    
 //			ssn.getTransaction().commit(); // committing session
@@ -244,7 +260,7 @@ public class nav_report_temp_1_main
 
 
 
-	private static void Generate_rank() 
+	private static void Generate_rank(String Fund_Type) 
 	{
 		SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
 		Session ssn = sessionfactry.openSession();
@@ -262,7 +278,7 @@ public class nav_report_temp_1_main
  		coment_list = criteria_1.list(); 
 
 		int col_val=0;
-		String[] col_lst ={"ret_mnth_3","ret_mnth_6","ret_mnth_12","ret_mnth_9_forwd","ret_mnth_12_forwd","ret_mnth_18","ret_mnth_18_forwd","ret_mnth_24","ret_mnth_30","ret_mnth_36","ret_mnth_42","ret_mnth_48","ret_mnth_54","ret_mnth_60"};
+		String[] col_lst ={"ret_mnth_3","ret_mnth_6","ret_mnth_12","ret_mnth_9_forwd","ret_mnth_12_forwd","ret_mnth_18","ret_mnth_18_forwd","ret_mnth_24","ret_mnth_30","ret_mnth_36","ret_mnth_36_forwd","ret_mnth_42","ret_mnth_48","ret_mnth_54","ret_mnth_60"};
 		
 		for(String cmnt : coment_list)
 		{  
@@ -273,10 +289,10 @@ public class nav_report_temp_1_main
 				   
 //				System.out.println("Coming....");  
 				String hql = "FROM nav_report_temp_1 WHERE coment='"+cmnt+
-				             "'and "+colmn+"!=0 ORDER BY "+colmn+" ASC ";
+				             "'and "+colmn+"!=0 and key.Fund_Type ='"+Fund_Type+"'ORDER BY "+colmn+" ASC ";
 				
 				
-				System.out.println(hql);
+//				System.out.println(hql);
 				Query query = ssn.createQuery(hql);
 				ArrayList<nav_report_temp_1> n_r_t = (ArrayList<nav_report_temp_1>) query.list();
 				
@@ -518,6 +534,32 @@ public class nav_report_temp_1_main
 					 	        rank_tmp++;
 					 	    
 					    }
+					   	
+					 	if(colmn.equals("ret_mnth_36_forwd") || colmn=="ret_mnth_36_forwd")
+			 		    {
+	   		 		        retval = Double.compare(tmp_val,t1.getRet_mnth_36_forwd());  		 		        	   	   		 		        
+	   	   		 		
+	   		 		        if(retval==0)
+	   		 		        {
+	   		 		        	 t1.setRet_mnth_36_forwd_rank(rank_tmp-1);
+	   		 		        	 ssn.update(t1);
+	   		 		             db_flag++;
+	   		 		        	
+	   		 		        }
+	   		 		        else
+	   		 		        {
+	   		 		        t1.setRet_mnth_36_forwd_rank(rank_tmp);
+		 		        	     ssn.update(t1);
+		 		        	     db_flag++;     	
+	   		 		        }
+	   		 		        
+	   		 		        
+	   		 		        tmp_val=t1.getRet_mnth_36_forwd();
+	   	   		 	        rank_tmp++;
+	   	   		 	    
+			 		    }
+					   	
+					   	
 					   	if(colmn.equals("ret_mnth_42") || colmn=="ret_mnth_42")
 					    {
 				 		        retval = Double.compare(tmp_val,t1.getRet_mnth_42());  		 		        	   	   		 		        

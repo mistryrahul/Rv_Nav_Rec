@@ -14,7 +14,7 @@ public class Custom_Merged_Report_Main {
 	 */
 	public static void main(String[] args) 
 	{
-		
+		String Fund_Type;
 		double temp_val_hldr;
 		int rank_hldr=0;
 		double retval=-99989;
@@ -23,14 +23,16 @@ public class Custom_Merged_Report_Main {
 		try
 		{     
 			 
-		String colum_lst[] = {"backward_6","backward_12","backward_18","backward_24","backward_30","backward_36","backward_42","backward_48","backward_54","backward_60","forwar_9_mnths","forwar_12_mnths","forwar_18_mnths","last_4_neg_avg_cat_ret_otb","last_4_pos_avg_cat_ret_otb","last_8_neg_avg_cat_ret_otb","last_8_pos_avg_cat_ret_otb","last_12_neg_avg_cat_ret_otb","last_12_pos_avg_cat_ret_otb","last_16_neg_avg_cat_ret_otb","last_16_pos_avg_cat_ret_otb", "last_20_neg_avg_cat_ret_otb" , "last_20_pos_avg_cat_ret_otb","cri","no_of_stock","year_1_1","year_1_2","year_1_3","year_1_4","max_Drawdown_year_1","max_Drawdown_year_2","max_Drawdown_year_3","max_Drawdown_year_4","max_Drawdown_year_5","avg_return_50_minus_200","last_200_day_return"};
+		String colum_lst[] = {"backward_6","backward_12","backward_18","backward_24","backward_30","backward_36","backward_42","backward_48","backward_54","backward_60","forwar_9_mnths","forwar_12_mnths","forwar_18_mnths","forwar_36_mnths","last_4_neg_avg_cat_ret_otb","last_4_pos_avg_cat_ret_otb","last_8_neg_avg_cat_ret_otb","last_8_pos_avg_cat_ret_otb","last_12_neg_avg_cat_ret_otb","last_12_pos_avg_cat_ret_otb","last_16_neg_avg_cat_ret_otb","last_16_pos_avg_cat_ret_otb", "last_20_neg_avg_cat_ret_otb" , "last_20_pos_avg_cat_ret_otb","cri","no_of_stock","year_1_1","year_1_2","year_1_3","year_1_4","max_Drawdown_year_1","max_Drawdown_year_2","max_Drawdown_year_3","max_Drawdown_year_4","max_Drawdown_year_5","avg_return_50_minus_200","last_200_day_return"};
 
-	    
+		 // Type of fund is responsible for selecting appropriate scheme codes  
+//        Fund_Type="EQUITY_ELSS"; // This field is mandatory
+		Fund_Type="EQUITY_LARGE_CAP_NEW"; // This field is mandatory
 		
 		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
 	    ssn.beginTransaction();		
 	    
-	    ArrayList<String> quarter_list = (ArrayList<String>) ssn.createQuery("select distinct(quarter) from Custom_Merged_Report_W_Rank ").list();
+	    ArrayList<String> quarter_list = (ArrayList<String>) ssn.createQuery("select distinct(quarter) from Custom_Merged_Report_W_Rank where key.Fund_Type='"+Fund_Type+"' ").list();
 	    
 	    for(String quarter : quarter_list)
 	    {
@@ -40,7 +42,7 @@ public class Custom_Merged_Report_Main {
 	    	for(String column : colum_lst)
 	    	{  
 //	    		   System.out.println("Generating Rank of-->>"+column);
-	    		   ArrayList<Custom_Merged_Report_W_Rank> data_lst = (ArrayList<Custom_Merged_Report_W_Rank>) ssn.createQuery("from Custom_Merged_Report_W_Rank where quarter='"+quarter+"' order by "+column).list();
+	    		   ArrayList<Custom_Merged_Report_W_Rank> data_lst = (ArrayList<Custom_Merged_Report_W_Rank>) ssn.createQuery("from Custom_Merged_Report_W_Rank where quarter='"+quarter+"' and key.Fund_Type='"+Fund_Type+"' order by "+column).list();
 	    		   
 	    		   temp_val_hldr=-999999;
 	   	    	   rank_hldr=0;
@@ -391,6 +393,32 @@ public class Custom_Merged_Report_Main {
 			 		    	
 			 		    	
 			 		    	temp_val_hldr=arm.getForwar_18_mnths();
+	    			   }
+	    			   
+	    			   if(column=="forwar_36_mnths")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getForwar_36_mnths());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_forwar_36_mnths(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_forwar_36_mnths(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getForwar_36_mnths();
 	    			   }
 	    			   
 	    			   if(column=="cri")

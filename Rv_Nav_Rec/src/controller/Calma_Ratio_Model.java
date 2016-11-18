@@ -12,6 +12,7 @@ public class Calma_Ratio_Model
 	 @EmbeddedId
 	 Report_6_pk key;
 	
+	 
 	 double forward_12_mnth_ret; // forward 12 months return
 	 String comment; // Quarter of year
 	 
@@ -144,6 +145,7 @@ public class Calma_Ratio_Model
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
+
 	
 	
    	

@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 
 import controller.Avg_ret_Model;
 import controller.Qtr_Avg;
+import controller.Scheme_Detail;
 import controller.composite_pk_avg_re_model;
 import controller.nav_hist;
 import controller.nav_report_3_stable;
@@ -27,57 +28,250 @@ import sessionFactory.HIbernateSession;
 
 public class avg_return_2_main {
 
-	public static List<java.util.Date> getDates(long s_code) throws ParseException
+//	public static List<java.util.Date> getDates(long s_code, Session ssn , java.util.Date next_qtr_dt) throws ParseException
+//	{
+//		List<java.util.Date> dd_final=null;
+////		Session ssn=null;
+////		ssn = HIbernateSession.getSessionFactory().openSession(); 
+//	    
+////		ssn.beginTransaction();
+//	  	
+//		if(next_qtr_dt==null)
+//		{
+//			Criteria criteria_1 = ssn.createCriteria(nav_hist.class );
+//			criteria_1.setProjection( Projections.distinct(Projections.property("nav_date")));  		
+//	  		criteria_1.add(Restrictions.eq("scheme_code",(int) s_code));
+//	  		criteria_1.addOrder(Order.asc("nav_date"));
+//	  		criteria_1.setMaxResults(1);
+//	  		
+//	  		List<java.util.Date> dd = criteria_1.list(); 
+//	           
+//	  		if(dd.size()==0)
+//	  		{
+//	  			dd_final=null;
+//	  		}
+//	  		else
+//	  		{
+//	  	  		java.util.Date ddd = dd.get(0);         		
+//	  	  		
+//			  	  if(ddd.getMonth()==0 || ddd.getMonth()==1 || ddd.getMonth()==2)
+//			      {
+//			    	   ddd.setDate(31);
+//			    	   ddd.setMonth(2);
+//			      }
+//			  	  if(ddd.getMonth()==3 || ddd.getMonth()==4 || ddd.getMonth()==5)
+//			      {
+//			  	        ddd.setDate(30);
+//			  	        ddd.setMonth(5);
+//			      }
+//			  	  if(ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==8)
+//			      {
+//			  	        ddd.setDate(30);
+//			  	        ddd.setMonth(8);
+//			      }
+//			  	  if(ddd.getMonth()==9 || ddd.getMonth()==10 || ddd.getMonth()==11)
+//			      {
+//				        ddd.setDate(31);
+//				        ddd.setMonth(11);
+//			      }
+////	        System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
+////		  	  System.out.println("FInal Date Prepared-->>"+ddd);
+////			  System.out.println("Scheme_code-->>"+s_code);	  
+////			  System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
+//			  
+//			  
+//			  
+//			  	List<nav_hist> nv_dt_lst = get_list_of_dates_db(ddd, (int) s_code, ssn);		  	  
+//		        
+//			  	
+////			  	   System.out.println("Got value @ Date-->>"+nv_dt_lst.get(0));
+//			  	if(nv_dt_lst.size()==0)
+//			  	{
+//			  		dd_final=null;
+//			  		
+//			  	}
+//			  	else
+//			  	{
+//			  		dd_final = new ArrayList<java.util.Date>();
+//				  	
+//				  	dd_final.add(nv_dt_lst.get(0).getNav_date());
+//			  	}
+//			  	
+//			  	
+//	  		}
+//		}
+//		else
+//		{
+//			Calendar cal = Calendar.getInstance();
+//			 
+//			ArrayList<Date> first_dt = (ArrayList<Date>) ssn.createQuery("select distinct(nav_date) from nav_hist_full where scheme_code='"+s_code+"'").list();
+//			java.util.Date ddd = first_dt.get(0);
+//	
+//			if(ddd.getMonth()==0 || ddd.getMonth()==1 || ddd.getMonth()==2)
+//		      {
+//		    	   ddd.setDate(31);
+//		    	   ddd.setMonth(2);
+//		      }
+//		  	  if(ddd.getMonth()==3 || ddd.getMonth()==4 || ddd.getMonth()==5)
+//		      {
+//		  	        ddd.setDate(30);
+//		  	        ddd.setMonth(5);
+//		      }
+//		  	  if(ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==8)
+//		      {
+//		  	        ddd.setDate(30);
+//		  	        ddd.setMonth(8);
+//		      }
+//		  	  if(ddd.getMonth()==9 || ddd.getMonth()==10 || ddd.getMonth()==11)
+//		      {
+//			        ddd.setDate(31);
+//			        ddd.setMonth(11);
+//		      }
+//		  	  
+//		  	  
+//		  	  cal.setTime(ddd);
+////		      cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)+3));
+//		      cal.add(Calendar.MONTH,3);
+//		      ddd = cal.getTime();
+//		      
+//		      
+//		  	  
+//		      dd_final = getDates(s_code,ssn,ddd);
+//			
+//		}
+//		
+//		
+//		  
+//  		
+//  		
+////  		ssn.close();
+//  		
+//  		ssn.getTransaction().commit();
+//  		ssn.beginTransaction();
+//  		
+//  		return dd_final;
+//  		
+//	}
+	
+	
+	public static List<java.util.Date> getDates(long s_code, Session ssn , java.util.Date next_qtr_dt) throws ParseException
 	{
 		List<java.util.Date> dd_final=null;
-		Session ssn=null;
-		ssn = HIbernateSession.getSessionFactory().openSession(); 
-	  	ssn.beginTransaction();
+//		Session ssn=null;
+//		ssn = HIbernateSession.getSessionFactory().openSession(); 
+	    
+//		ssn.beginTransaction();
 	  	
-		Criteria criteria_1 = ssn.createCriteria(nav_hist.class );
-		criteria_1.setProjection( Projections.distinct(Projections.property("nav_date")));  		
-  		criteria_1.add(Restrictions.eq("scheme_code",(int) s_code));
-  		criteria_1.addOrder(Order.asc("nav_date"));
-  		criteria_1.setMaxResults(1);
-  		
-  		List<java.util.Date> dd = criteria_1.list(); 
-           
-  		if(dd.size()==0)
-  		{
-  			dd_final=null;
-  		}
-  		else
-  		{
-  	  		java.util.Date ddd = dd.get(0);         		
-  	  		
-		  	  if(ddd.getMonth()==0 || ddd.getMonth()==1 || ddd.getMonth()==2)
-		      {
-		    	   ddd.setDate(31);
-		    	   ddd.setMonth(2);
-		      }
-		  	  if(ddd.getMonth()==3 || ddd.getMonth()==4 || ddd.getMonth()==5)
-		      {
-		  	        ddd.setDate(30);
-		  	        ddd.setMonth(5);
-		      }
-		  	  if(ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==8)
-		      {
-		  	        ddd.setDate(30);
-		  	        ddd.setMonth(8);
-		      }
-		  	  if(ddd.getMonth()==9 || ddd.getMonth()==10 || ddd.getMonth()==11)
-		      {
-			        ddd.setDate(31);
-			        ddd.setMonth(11);
-		      }
-//        System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
-//	  	  System.out.println("FInal Date Prepared-->>"+ddd);
-//		  System.out.println("Scheme_code-->>"+s_code);	  
-//		  System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
-		  
-		  
-		  
-		  	List<nav_hist> nv_dt_lst = get_list_of_dates_db(ddd, (int) s_code);		  	  
+		if(next_qtr_dt==null)
+		{
+			System.out.println("IN NULLL CASE");
+			
+			Criteria criteria_1 = ssn.createCriteria(nav_hist.class );
+			criteria_1.setProjection( Projections.distinct(Projections.property("nav_date")));  		
+	  		criteria_1.add(Restrictions.eq("scheme_code",(int) s_code));
+	  		criteria_1.addOrder(Order.asc("nav_date"));
+	  		criteria_1.setMaxResults(1);
+	  		
+	  		// NEW ADDED 
+	  		List<java.util.Date> dd = criteria_1.list(); 
+	           
+	  		if(dd.size()==0)
+	  		{
+	  			
+	  			System.out.println("COMING HERE IN THE no DTA LIST(==NULL)");
+	  			dd_final=null;
+	  			
+	  		}
+	  		else if(dd.size()>0)
+	  		{
+	  	  		java.util.Date ddd = dd.get(0);         		
+	  	  		
+			  	  if(ddd.getMonth()==0 || ddd.getMonth()==1 || ddd.getMonth()==2)
+			      {
+			    	   ddd.setDate(31);
+			    	   ddd.setMonth(2);
+			      }
+			  	  if(ddd.getMonth()==3 || ddd.getMonth()==4 || ddd.getMonth()==5)
+			      {
+			  	        ddd.setDate(30);
+			  	        ddd.setMonth(5);
+			      }
+			  	  if(ddd.getMonth()==6 || ddd.getMonth()==7 || ddd.getMonth()==8)
+			      {
+			  	        ddd.setDate(30);
+			  	        ddd.setMonth(8);
+			      }
+			  	  if(ddd.getMonth()==9 || ddd.getMonth()==10 || ddd.getMonth()==11)
+			      {
+				        ddd.setDate(31);
+				        ddd.setMonth(11);
+			      }
+//	        System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
+//		  	  System.out.println("FInal Date Prepared-->>"+ddd);
+//			  System.out.println("Scheme_code-->>"+s_code);	  
+//			  System.out.println("<<<<<<<<<------------>>>>>>>>>>>>");
+			  
+			  
+			  
+			  	List<nav_hist> nv_dt_lst = avg_return_2_main.get_list_of_dates_db(ddd, (int) s_code, ssn);		  	  
+		        
+			  	
+//			  	   System.out.println("Got value @ Date-->>"+nv_dt_lst.get(0));
+			  	if(nv_dt_lst.size()==0)
+			  	{
+			  		dd_final=null;
+			  		
+			  		
+			  		ArrayList<Date> first_dt = (ArrayList<Date>) ssn.createQuery("select distinct(nav_date) from nav_hist_full where scheme_code='"+s_code+"'").list();
+					java.util.Date ddd_1 = first_dt.get(0);
+			
+					if(ddd_1.getMonth()==0 || ddd_1.getMonth()==1 || ddd_1.getMonth()==2)
+				      {
+						ddd_1.setDate(31);
+						ddd_1.setMonth(2);
+				      }
+				  	  if(ddd_1.getMonth()==3 || ddd_1.getMonth()==4 || ddd_1.getMonth()==5)
+				      {
+				  		ddd_1.setDate(30);
+				  		ddd_1.setMonth(5);
+				      }
+				  	  if(ddd_1.getMonth()==6 || ddd_1.getMonth()==7 || ddd_1.getMonth()==8)
+				      {
+				  		ddd_1.setDate(30);
+				  		ddd_1.setMonth(8);
+				      }
+				  	  if(ddd_1.getMonth()==9 || ddd_1.getMonth()==10 || ddd_1.getMonth()==11)
+				      {
+				  		ddd_1.setDate(31);
+				  		ddd_1.setMonth(11);
+				      }
+		  			
+		  			dd_final = getDates(s_code,ssn,ddd);
+			  		
+			  		
+			  	}
+			  	else
+			  	{
+			  		dd_final = new ArrayList<java.util.Date>();
+				  	
+				  	dd_final.add(nv_dt_lst.get(0).getNav_date());
+			  	}
+			  	
+			  	
+	  		}
+		}
+		else
+		{
+			Calendar cal = Calendar.getInstance();	  	  
+		  	  
+		  	  cal.setTime(next_qtr_dt);
+//		      cal.set(Calendar.MONTH, (cal.get(Calendar.MONTH)+3));
+		      cal.add(Calendar.MONTH,3);
+		      Date ddd = cal.getTime();
+		      
+		      
+		       
+		  	List<nav_hist> nv_dt_lst = avg_return_2_main.get_list_of_dates_db(ddd, (int) s_code, ssn);		  	  
 	        
 		  	
 //		  	   System.out.println("Got value @ Date-->>"+nv_dt_lst.get(0));
@@ -92,18 +286,26 @@ public class avg_return_2_main {
 			  	
 			  	dd_final.add(nv_dt_lst.get(0).getNav_date());
 		  	}
-		  	
-		  	
-  		}
+		      
+		  	  
+			
+		}
+		
+		
+		  
   		
   		
-  		ssn.close();
+//  		ssn.close();
+  		
+  		ssn.getTransaction().commit();
+  		ssn.beginTransaction();
   		
   		return dd_final;
   		
 	}
 	
-	private static void Calculate_Rank() 
+	
+	private static void Calculate_Rank(String fund_type) 
 	{
 		
 	try
@@ -118,8 +320,9 @@ public class avg_return_2_main {
 //		criteria_1.addOrder(Order.asc("end_dt"));
 //		
 		
-	  	Query qq1 = ssn.createQuery("select distinct(comment) from avg_return order by end_dt");
+	  	Query qq1 = ssn.createQuery("select distinct(comment) from avg_return where key.Fund_Type ='"+fund_type+"' order by end_dt");
 		
+//		System.out.println("select distinct(comment) from avg_return where key.Fund_Type ='"+fund_type+"' order by end_dt");
 		
 //		Criteria criteria_2 = ssn.createCriteria( nav_report_3_stable.class );
 // 		criteria_2.setProjection( Projections.distinct(Projections.property("scheme_Code")));  		
@@ -142,7 +345,10 @@ public class avg_return_2_main {
    		           temp_nav_val=999;
    				   temp_rank=1;
    				
-   		 		   String hql = "from avg_return where comment=:cmnt order by nav_val desc";            
+   		 		   String hql = "from avg_return where comment=:cmnt and key.Fund_Type ='"+fund_type+"' order by nav_val desc";            
+   		 		   
+   		 		   System.out.println(hql);
+   		 		   
    		 		   Query q = ssn.createQuery(hql);
    		 		   q.setParameter("cmnt", cmnt);
    		 		   
@@ -198,14 +404,17 @@ public class avg_return_2_main {
 		
 	}
 	
-	static ArrayList<nav_hist> get_list_of_dates_db(java.util.Date day, int scheme_code) throws ParseException
+	static ArrayList<nav_hist> get_list_of_dates_db(java.util.Date day, int scheme_code, Session ssn) throws ParseException
 	{
 			  SimpleDateFormat formatter=null;
 			  java.util.Date date_nav_chk_start=null;
 			  java.util.Date date_nav_chk_end=null;
 			  
 			  ArrayList<nav_hist> lst = new ArrayList<nav_hist>();
-			  Session ssn= HIbernateSession.getSessionFactory().openSession();
+
+			  ssn.getTransaction().commit();
+			  ssn.beginTransaction();
+			  //			  Session ssn= HIbernateSession.getSessionFactory().openSession();
 			 
 //			  formatter = new SimpleDateFormat("dd/MM/yyyy");
 //			  System.out.println("DATE-FOrmatter-->>"+myDate);
@@ -219,20 +428,27 @@ public class avg_return_2_main {
       		  criteria.addOrder(org.hibernate.criterion.Order.desc("nav_date"));
 			  lst =(ArrayList<nav_hist>) criteria.list();
 			  
-//			  ssn.getTransaction().commit();
-			  ssn.close();
+			  ssn.getTransaction().commit();
+//			  ssn.close();
+			  ssn.beginTransaction();
 		 return lst;
 	}
 	
-	public static void Calculate_Save_Nav(java.util.Date d1 , nav_hist Ob2 , long sch_code)
+	public static void Calculate_Save_Nav(java.util.Date d1 , nav_hist Ob2 , long sch_code , String fund_type,Session ssn)
 	{
 		
 //		System.out.println("TO DATE-->>"+d1);
 //		System.out.println("TO From DATE-->>"+d2);
 		double val=0;
-		Session ssn=null;
-		ssn = HIbernateSession.getSessionFactory().openSession(); 
-		ssn.beginTransaction();
+//		Session ssn=null;
+		
+//		ssn = HIbernateSession.getSessionFactory().openSession(); 
+		
+		if(ssn.getTransaction()==null)
+		{
+			ssn.beginTransaction();	
+		}
+		
 		
 		nav_hist Ob1 = (nav_hist) ssn.createCriteria(controller.nav_hist.class).add(Restrictions.eq("scheme_code", (int) sch_code)).add(Restrictions.eq("nav_date", d1 )).uniqueResult();  
 		
@@ -261,6 +477,7 @@ public class avg_return_2_main {
 		composite_pk_avg_re_model ob_pk = new composite_pk_avg_re_model();
 		ob_pk.setScheme_code(sch_code);
 		ob_pk.setStart_dt(d1);
+		ob_pk.setFund_Type(fund_type);
 		
 		Avg_ret_Model ob_tmp =new Avg_ret_Model();
 		ob_tmp.setKey(ob_pk);
@@ -300,11 +517,11 @@ public class avg_return_2_main {
 		
 		
 		
-		
+	
 		ssn.save(ob_tmp);
 		ssn.getTransaction().commit();
-		ssn.close();
-		
+//		ssn.close();
+		ssn.beginTransaction();
 		
 		
 		
@@ -315,8 +532,9 @@ public class avg_return_2_main {
 	public static void main(String[] args) 
 	{
 
-//    	Calculate_Rank();
+//    	Calculate_Rank("EQUITY_ELSS");
 		
+		String Fund_Type="";
 		List<nav_hist> nav_hst_lst;
         int qtr_chker=0;
         int date_loop_flag=0;
@@ -336,11 +554,15 @@ public class avg_return_2_main {
 	    java.util.Date ddd=null;
 	 try
 	 {
-		   
-		  	
+		    //  ***** SELECT THE TYPE OF FUND  ***** 
+//		     Fund_Type="EQUITY_ELSS";  // has to be passed
+		     Fund_Type="EQUITY_SML";  // has to be passed
+		 
 		  	List<Long> oo = new ArrayList<Long>();
-
-	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list.txt"), "UTF-8");	  	   
+		  	
+//	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list_EQUITY_ELSS.txt"), "UTF-8");
+	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/SML_scheme_code_list.txt"), "UTF-8");		  	
+//	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list.txt"), "UTF-8");	  	   
 		  	   
 	 while (it_s.hasNext()) // if the file has lines 
    	            {
@@ -349,6 +571,38 @@ public class avg_return_2_main {
 	 
 	  System.out.println("File loaded Successfullyy-----");
 		  	
+	        
+	  ssn = HIbernateSession.getSessionFactory().openSession(); 
+      ssn.beginTransaction();
+		 
+		 
+	  
+//	  System.out.println(oo.get(0));
+        
+	  //NEW ADDED
+	  // OMITING SCHEME_CODE WHICH ARE CLOSE ENDED
+	  
+	  for(int indx=0;indx<oo.size();indx++)
+	  {
+		  ArrayList<Scheme_Detail> schm_dtl = (ArrayList<Scheme_Detail>) ssn.createQuery("from Scheme_Detail where scheme_code=? and TYPE_CODE!=2").setLong(0, oo.get(indx)).list();
+		    
+		    if(schm_dtl.size()==0)
+		    {
+		    	oo.remove(indx);
+		    }
+		   
+	  }
+	  
+//	  System.out.println("SIZE OF THE LIST--->>>"+oo.size());
+	  
+	  
+	  
+	  
+	  if(oo.size()==0)
+	  {
+		  System.out.println("NO DATA LEFT TO EXECUTE:---------------");
+		  System.out.println("EXIT");
+	  }
 		  	
 //		  	Criteria criteria = ssn.createCriteria( nav_report_3_stable.class );
 //		  	criteria.setProjection( Projections.distinct(Projections.property("scheme_Code")));
@@ -366,14 +620,13 @@ public class avg_return_2_main {
 	  	 
 //	  	long ob =15;
 
-//		  	 ssn = HIbernateSession.getSessionFactory().openSession(); 
-//			 ssn.beginTransaction();
+		  	 
 			  	
 	    for(long ob : oo)
 		     	{
 //	    	       System.out.println("Scheme COde-->>"+ob);
 	     dt_lst=null;       
-    	 dt_lst = getDates(ob); //Starting DAte
+    	 dt_lst = getDates(ob,ssn,null); //Starting DAte
     	 
     	 date_loop_flag=0; 	       
 	    	       
@@ -423,19 +676,19 @@ public class avg_return_2_main {
 					      }
 					      
 					      
-					      if(ddd.compareTo(new Date(115,05,30))==0)
+					      if(ddd.compareTo(new Date(116,10,20))==0) //set upper date limit
 					      {
 					    	  date_loop_flag=1;
 					      }
 					      
 					        
-				  		   nav_hst_lst = get_list_of_dates_db(ddd, (int) ob);
+				  		   nav_hst_lst = get_list_of_dates_db(ddd, (int) ob, ssn);
 				  		      
 				  		  if(nav_hst_lst.size()==0)
 				  		     {
 //				  		    	 break;   /// new added code for missing data ////-------added on 13-08-2016-----
 				  			    date_tmp=date_tmp;
-				  			    tmp_obj_met = Fill_Blanks(ddd,ob,date_tmp,nav_hst_lst);
+				  			    tmp_obj_met = Fill_Blanks(ddd,ob,date_tmp,nav_hst_lst,ssn);
 				                
 				                
 				                    if(tmp_obj_met==null)
@@ -465,14 +718,14 @@ public class avg_return_2_main {
 //				  		    System.out.println("Scheme_COde-->>"+ob);
 //				  		    System.out.println("<<<<<<<-------END---->>>>>>>>>");
 				  		    
-				  		    Calculate_Save_Nav(date_tmp,nav_hst_lst.get(0),ob);
+				  		    Calculate_Save_Nav(date_tmp,nav_hst_lst.get(0),ob ,Fund_Type,ssn);
 				  		    
 //				  		    Setting the date to 30th or 31st of the month. as wee need date from quarter
 				  		    if( nav_hst_lst.get(0).getNav_date().getMonth()==0 || nav_hst_lst.get(0).getNav_date().getMonth()==2 || nav_hst_lst.get(0).getNav_date().getMonth()==4 || nav_hst_lst.get(0).getNav_date().getMonth()==6 || nav_hst_lst.get(0).getNav_date().getMonth()==7 || nav_hst_lst.get(0).getNav_date().getMonth()==9 || nav_hst_lst.get(0).getNav_date().getMonth()==11)
 				  		    {
 				  		    	date_tmp=nav_hst_lst.get(0).getNav_date();
 				  		    	date_tmp.setDate(31);
-				  		    	tmp_dt_lst = get_list_of_dates_db(date_tmp, (int) ob);
+				  		    	tmp_dt_lst = get_list_of_dates_db(date_tmp, (int) ob,ssn);
 				  		    	date_tmp=tmp_dt_lst.get(0).getNav_date();
 //				  		    	System.out.println("Scheme COde-->>"+ob+"DATE SET IF-->>"+date_tmp);
 				  		    	
@@ -482,7 +735,7 @@ public class avg_return_2_main {
 //				  		    	System.out.println("Month-->>"+nav_hst_lst.get(0).getNav_date().getMonth());
 				  		    	date_tmp=nav_hst_lst.get(0).getNav_date();
 				  		    	date_tmp.setDate(30);
-				  		    	tmp_dt_lst = get_list_of_dates_db(date_tmp, (int) ob);
+				  		    	tmp_dt_lst = get_list_of_dates_db(date_tmp, (int) ob,ssn);
 				  		    	date_tmp=tmp_dt_lst.get(0).getNav_date();
 //				  		    	System.out.println("Scheme Code-->"+ob+"DATE SET ELSE-->>"+date_tmp);
 				  		    }
@@ -501,7 +754,7 @@ public class avg_return_2_main {
 		  	System.out.println("<---- NAV Return Complete ---->");
 		  	System.out.println("<-----Calculating Rank of Each Quarter----->");
 		  	
-		  	Calculate_Rank();
+		  	Calculate_Rank(Fund_Type);
 		  	
 		  	System.out.println("<----- Rank Calculation Complete----->");
 	  	
@@ -515,7 +768,7 @@ public class avg_return_2_main {
 	}
 
 	private static nav_hist Fill_Blanks(Date ddd, long ob, Date date_tmp,
-			List<nav_hist> nav_hst_lst) throws ParseException {
+			List<nav_hist> nav_hst_lst, Session ssn) throws ParseException {
 	       ArrayList<java.util.Date> date_holder = new ArrayList<Date>();
 		
 	       int qtr_chker=1;
@@ -530,9 +783,14 @@ public class avg_return_2_main {
 		   nav_hist tmp_obj_ret=null;
 		   
 		   
-		   Session ssn=null;
-		   ssn = HIbernateSession.getSessionFactory().openSession(); 
-		   ssn.beginTransaction();
+//		   Session ssn=null;
+//		   ssn = HIbernateSession.getSessionFactory().openSession(); 
+		 
+//		   if(ssn.getTransaction()==null)
+//		   {
+//			   ssn.beginTransaction();   
+//		   }
+		   
 		   
 		   
 		   
@@ -559,7 +817,7 @@ public class avg_return_2_main {
 	    	   
 	    	   System.out.println(":Prev Date +3 Months-->>"+ddd);
 	    	   
-	    	    nav_hst_lst = get_list_of_dates_db(ddd, (int) ob);
+	    	    nav_hst_lst = get_list_of_dates_db(ddd, (int) ob,ssn);
 	    	    
 	    	    if(nav_hst_lst.size()==0)
 	    	    {
@@ -642,7 +900,11 @@ public class avg_return_2_main {
  
 		        
 		
-		ssn.close();
+//		ssn.close();
+	    ssn.getTransaction().commit();
+	    ssn.flush();
+	    ssn.clear();
+	    ssn.beginTransaction();
 		
 		return tmp_obj_ret;
 		

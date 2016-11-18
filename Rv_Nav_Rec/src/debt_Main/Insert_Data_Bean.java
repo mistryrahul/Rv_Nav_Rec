@@ -2,6 +2,7 @@ package debt_Main;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,9 @@ import debt_Controller.Pk_generic;
 
 public class Insert_Data_Bean {
 
+	
+//	CURRENT UPDATED METHOD(CURRENT)
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
          
@@ -29,7 +33,7 @@ public class Insert_Data_Bean {
 		long i= 0;  // make this the last id after each operation
 		int i_i=0;
 		Session ssn = null;
-		int db_flg=0;
+		int db_flg=1;
 		int ii=1;
 		
 		java.util.Date dd_1 = null;
@@ -40,7 +44,8 @@ public class Insert_Data_Bean {
 		Pk_generic pkey = null;
 		try
 		{   
-			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/avg_maturity.ace"), "UTF-8");
+			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/avg_maturity_sept_to_oct_20.ace"), "UTF-8");
+//			LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/avg_maturity.ace"), "UTF-8");
 			SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();
 			ssn = sessionfactry.openSession();
 			ssn.beginTransaction();
@@ -118,7 +123,7 @@ public class Insert_Data_Bean {
 				
 				if(separated[7] != null && !separated[7].isEmpty())
 				{
-					System.out.print("7-"+separated[7]+"\t");
+//					System.out.print("7-"+separated[7]+"\t");
 					dc.setMod_dur_days(separated[7]);
 				}
 				
@@ -126,7 +131,7 @@ public class Insert_Data_Bean {
 			   if(separated[8]!=null && !separated[8].isEmpty())
 			   {
 				dc.setYtm(Double.parseDouble(separated[8]));   
-				System.out.print("8-"+separated[8]+"\t");
+//				System.out.print("8-"+separated[8]+"\t");
 			   }
 				
 				
@@ -134,7 +139,7 @@ public class Insert_Data_Bean {
 				{
 					if(separated[9]!="NULL" || (separated[9].equals("NULL")!=true))
 					{
-						System.out.print("9-"+separated[9]+"\t"); 
+//						System.out.print("9-"+separated[9]+"\t"); 
 						dc.setTurnover_ratio(Double.parseDouble(separated[9]));	
 					}
 					
@@ -142,21 +147,31 @@ public class Insert_Data_Bean {
 				
 				
 				
-				
-     					ssn.save(dc);
+				ArrayList<Avg_maturity> avg_mat_lst = (ArrayList<Avg_maturity>) ssn.createQuery("from Avg_maturity where key.day=? and key.scheme_code=?").setDate(0, pkey.getDay()).setLong(1, pkey.getScheme_code()).list();
+                   
+				    if(avg_mat_lst.size()>0)
+				    {
+				    	
+				    }
+				    else
+				    {
+				    	ssn.save(dc);
 						db_flg++;
-						ii++;
+				    }
 				
 				
+     					
+				    ii++;
 				
-				if (db_flg%50==0)
+				
+				if (db_flg%30==0)
 				{
 					  
 //					  ssn.flush();
 //					  ssn.clear();
 				      ssn.getTransaction().commit(); 
 				      ssn.beginTransaction();
-				      db_flg=0;
+				      db_flg=1;
 				}
 				
 				
@@ -171,6 +186,12 @@ public class Insert_Data_Bean {
 //			System.out.println(separated[2]+"\n");
 //			System.out.println(separated[3]+"\n");
 //			System.out.println(separated[4]+"\n");
+//			System.out.println(separated[5]+"\n");
+//			System.out.println(separated[6]+"\n");
+//			System.out.println(separated[7]+"\n");
+//			System.out.println(separated[8]+"\n");
+//			System.out.println(separated[9]+"\n");
+			
 			e.printStackTrace();
 		}
 		finally

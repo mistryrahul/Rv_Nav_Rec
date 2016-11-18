@@ -29,8 +29,18 @@ public class Report_6_main {
 		    ssn.beginTransaction();	
 		    int x=-2;
 		    int last_4_qtr=0,last_8_qtr=0,last_12_qtr=0,last_16_qtr=0,last_20_qtr=0;
+		    String Fund_Type;
+		    
 		    
 		    ArrayList<nav_report_3_stable>  nav_rep_lst_tmp = null;
+		    
+		    
+			// Type of fund is responsible for selecting appropriate scheme codes  
+//	        Fund_Type="EQUITY_ELSS"; // This field is manditory //
+		    Fund_Type="EQUITY_SML"; // This field is manditory //
+	        
+	        
+	        
 //		    
 //	        Criteria criteria_1 = ssn.createCriteria( Avg_ret_Model.class );
 //			criteria_1.setProjection( Projections.distinct(Projections.property("comment")));  		
@@ -41,9 +51,22 @@ public class Report_6_main {
 //     		ArrayList<String> sortd_commnt_lst = null;
 //	 		sortd_commnt_lst = (ArrayList<String>) criteria_1.list();
 	 		
+		                                        //  If required to done MANUALY for some scheme_Code 
+												//		     ArrayList<Long> scheme_code_list_temp = new ArrayList<Long>();
+												//		    
+												//	         long[] schm_cd_lst = {23,407,447,489,716,748,758,903,905,931,933,942,950,1131,1273,1282,1283,1284,1331,1346,1348,1441,1464,1492,1608,1623,1849,1858,1956,1962,1973,2069,2090,2127,2129,2133,2171,2235,2271,2384,2390,2455,2461,2654,2669,2681,2711,2752,2782,2860,2896,3065,3247,3249,3281,3305,3317,3461,3581,3587,3626,3641,3644,4282,4457,4980,5153,6075,7329,7615,7747,7785,7841,7870,7874,8151,8217,8229,8250,8463,9078,9240,11889,12836,12860,12865,14493,14559,15557,16672,16706,21293,21769,24776,25378,25473,25995,26481,26778,27106,27775,28707,29082,29277,29359,29360,29424,29786,30021,30022,30395,30396,30397,31046,31353,31451,31571,31642,31837,32280,32348,32542,32658,33053,35321};
+												//	         
+												//	         for(long b : schm_cd_lst)
+												//	         {
+												//	        	 scheme_code_list_temp.add(b);
+												//	         }
+												//		    
+												//	         String hql_nw=" from avg_return where key.Fund_Type='"+Fund_Type+"' and key.scheme_code IN:list";
+//		                                        //           Query q_2 = ssn.createQuery(hql_nw).setParameterList("list", scheme_code_list_temp);
 	 		
-	 		String hql_nw=" from avg_return where start_dt<='2015-03-31'";
+		    String hql_nw=" from avg_return where key.Fund_Type='"+Fund_Type+"'";
 		    
+//	 		String hql_nw=" from avg_return where start_dt<='2016-10-20'";	    
 //		    String hql_nw=" from avg_return where start_dt='2010-03-31' and scheme_code=407";
 		    
 	 		
@@ -51,11 +74,8 @@ public class Report_6_main {
 	 		
 //	 		Criteria criteria_2 = ssn.createCriteria( Avg_ret_Model.class );
 //	 		criteria_2.add(Restrictions.le("start_dt",  new Date(115,02,31)));
-	 		
 //	 		criteria_2.addOrder(Order.asc("scheme_code"));
-	 		
 //	 		ArrayList<Avg_ret_Model> avg_ret_lst = (ArrayList<Avg_ret_Model>) criteria_2.list();
-	 		
 	 		
 	 		ArrayList<Avg_ret_Model> avg_ret_lst = (ArrayList<Avg_ret_Model>) q_2.list();
 	 		
@@ -64,8 +84,10 @@ public class Report_6_main {
 	 			{
 	 				  Report_6_Model r6m = new Report_6_Model();
 	 				  Report_6_pk pk = new Report_6_pk();
+	 				  
 	 				  pk.setScheme_code(arm.getKey().getScheme_code());
 	 				  pk.setFrom_date(arm.getKey().getStart_dt());
+	 				  pk.setFund_Type(Fund_Type);
 	 				  
 	 				  r6m.setKey(pk);
 	 				  
@@ -90,9 +112,7 @@ public class Report_6_main {
 					 {
 		 				//System.out.println("Qtr_4_"+( dd.getYear()-100));
 						 r6m.setComment("Qtr_4_"+( arm.getKey().getStart_dt().getYear()-100));
-					 }  
-	 				  
-	 				  
+					 }  				  
 	 				  
 //	 				  r6m.setComment(arm.getComment());
 	 				  
@@ -108,11 +128,11 @@ public class Report_6_main {
 //	 						  last_16_qtr  = Quarter_index_calc(x,16);
 //	 						  last_20_qtr  = Quarter_index_calc(x,20);
 	 						  
-	 						  Calculate_Save_Actual_Values(r6m,4,arm,ssn);
-	 						  Calculate_Save_Actual_Values(r6m,8,arm,ssn);
-	 						  Calculate_Save_Actual_Values(r6m,12,arm,ssn);
-	 						  Calculate_Save_Actual_Values(r6m,16,arm,ssn);
-	 						  Calculate_Save_Actual_Values(r6m,20,arm,ssn);
+	 						  Calculate_Save_Actual_Values(r6m,4,arm,ssn,Fund_Type);
+	 						  Calculate_Save_Actual_Values(r6m,8,arm,ssn,Fund_Type);
+	 						  Calculate_Save_Actual_Values(r6m,12,arm,ssn,Fund_Type);
+	 						  Calculate_Save_Actual_Values(r6m,16,arm,ssn,Fund_Type);
+	 						  Calculate_Save_Actual_Values(r6m,20,arm,ssn,Fund_Type);
 	 						  
 	 						 Criteria criteria_11 = ssn.createCriteria( nav_report_3_stable.class );
 	 				         criteria_11.add(Restrictions.eq("nav_from_date", r6m.getKey().getFrom_date()));  
@@ -127,9 +147,10 @@ public class Report_6_main {
 	 				           }						  
 	 						  
 	 						  
-	 						  
+	 				              
 	 						     ssn.save(r6m);
-	 						     						     
+	 						     					
+	 						     
 	  		  	        		 ssn.flush();
 	  		  	        		 ssn.clear();
 	  		  	        		 
@@ -158,7 +179,7 @@ public class Report_6_main {
 	}
 
 
-	private static void Calculate_Save_Actual_Values(Report_6_Model r6m,int no_of_quarters, Avg_ret_Model arm,Session ssn) 
+	private static void Calculate_Save_Actual_Values(Report_6_Model r6m,int no_of_quarters, Avg_ret_Model arm,Session ssn,String Fund_Type) 
 	{
 	    
 		int qtrs=0;
@@ -189,7 +210,7 @@ public class Report_6_main {
 //		criteria_1.add(Restrictions.eq("scheme_code", arm.getKey().getScheme_code()));
 // 		criteria_1.addOrder(Order.asc("end_dt"));
 		
-		String hql_p1="select DISTINCT(comment)from avg_return where scheme_code="+arm.getKey().getScheme_code()+"order by end_dt";
+		String hql_p1="select DISTINCT(comment)from avg_return where key.scheme_code="+arm.getKey().getScheme_code()+" and key.Fund_Type='"+Fund_Type+"' order by end_dt";
 		
 // 		String hql_p1="select DISTINCT(comment) from avg_return where scheme_code="+arm.getKey().getScheme_code()+"order by end_dt,comment";
  		Query q_p1 = ssn.createQuery(hql_p1);
@@ -213,7 +234,7 @@ public class Report_6_main {
 					   for(int i=qtrs;i<index;i++)  // orininal 
 					   {
 						     
-						        String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt";            
+						        String hql = "from avg_return where"+" key.scheme_code=:s_cd and comment=:cmnt and key.Fund_Type='"+Fund_Type+"'";            
 								Query q = ssn.createQuery(hql);
 								q.setParameter("s_cd", r6m.getKey().getScheme_code());
 								q.setParameter("cmnt", comment_list_sch_wise.get(i));
@@ -233,7 +254,7 @@ public class Report_6_main {
 							   			tot_return_value = tot_return_value + a_r_m.get(0).getReturn_value();
 								   		tot_nav_val = tot_nav_val + a_r_m.get(0).getNav_val();
 									   	   
-									   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn);
+									   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn,Fund_Type);
 								   		 actula_val=0.0;
 								   		 actula_val_1=0.0;
 								   		 
@@ -307,7 +328,7 @@ public class Report_6_main {
 					   {
 						     
 						     
-						        String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt";            
+						        String hql = "from avg_return where"+" key.scheme_code=:s_cd and comment=:cmnt and key.Fund_Type='"+Fund_Type+"'";            
 								Query q = ssn.createQuery(hql);
 								q.setParameter("s_cd", r6m.getKey().getScheme_code());
 								q.setParameter("cmnt", comment_list_sch_wise.get(i));
@@ -320,7 +341,7 @@ public class Report_6_main {
 						   			tot_return_value = tot_return_value + a_r_m.get(0).getReturn_value();
 							   		tot_nav_val = tot_nav_val + a_r_m.get(0).getNav_val();
 							   	   
-							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn);
+							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn,Fund_Type);
 						   		 actula_val=0.0;
 						   		 actula_val_1=0.0;
 						   		 
@@ -370,7 +391,7 @@ public class Report_6_main {
 					       
 					       r6m.setLast_8_pos_nav_ret_value_sum(last_pos_nav_ret_value_sum);
 					       r6m.setLast_8_neg_nav_ret_value_sum(last_neg_nav_ret_value_sum);
-					       
+					     
 //					       ssn.update(r6m);
 					 
 				 }
@@ -380,7 +401,7 @@ public class Report_6_main {
 					   {
 						     
 						     
-						        String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt";            
+						        String hql = "from avg_return where"+" key.scheme_code=:s_cd and comment=:cmnt and key.Fund_Type='"+Fund_Type+"'";            
 								Query q = ssn.createQuery(hql);
 								q.setParameter("s_cd", r6m.getKey().getScheme_code());
 								q.setParameter("cmnt", comment_list_sch_wise.get(i));
@@ -393,7 +414,7 @@ public class Report_6_main {
 						   			tot_return_value = tot_return_value + a_r_m.get(0).getReturn_value();
 							   		tot_nav_val = tot_nav_val + a_r_m.get(0).getNav_val();
 							   	   
-							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn);
+							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn,Fund_Type);
 						   		 actula_val=0.0;
 						   		 actula_val_1=0.0;
 						   		 
@@ -453,7 +474,7 @@ public class Report_6_main {
 					   {
 						     
 						     
-						        String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt";            
+						        String hql = "from avg_return where"+" key.scheme_code=:s_cd and comment=:cmnt and key.Fund_Type='"+Fund_Type+"'";            
 								Query q = ssn.createQuery(hql);
 								q.setParameter("s_cd", r6m.getKey().getScheme_code());
 								q.setParameter("cmnt", comment_list_sch_wise.get(i));
@@ -466,7 +487,7 @@ public class Report_6_main {
 						   			tot_return_value = tot_return_value + a_r_m.get(0).getReturn_value();
 							   		tot_nav_val = tot_nav_val + a_r_m.get(0).getNav_val();
 							   	   
-							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn);
+							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn,Fund_Type);
 						   		 actula_val=0.0;
 						   		 actula_val_1=0.0;
 						   		 
@@ -516,7 +537,7 @@ public class Report_6_main {
 					       
 					       r6m.setLast_16_pos_nav_ret_value_sum(last_pos_nav_ret_value_sum);
 					       r6m.setLast_16_neg_nav_ret_value_sum(last_neg_nav_ret_value_sum);
-					       
+					     
 //					       ssn.update(r6m);
 					 
 				 }
@@ -527,7 +548,7 @@ public class Report_6_main {
 					   {
 						     
 						     
-						        String hql = "from avg_return where"+" scheme_code=:s_cd and comment=:cmnt";            
+						        String hql = "from avg_return where"+" key.scheme_code=:s_cd and comment=:cmnt and key.Fund_Type='"+Fund_Type+"'";            
 								Query q = ssn.createQuery(hql);
 								q.setParameter("s_cd", r6m.getKey().getScheme_code());
 								q.setParameter("cmnt", comment_list_sch_wise.get(i));
@@ -540,7 +561,7 @@ public class Report_6_main {
 						   			tot_return_value = tot_return_value + a_r_m.get(0).getReturn_value();
 							   		tot_nav_val = tot_nav_val + a_r_m.get(0).getNav_val();
 							   	   
-							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn);
+							   	 cat_avg_tmp = GET_QTR_AVG_VAL(a_r_m.get(0).getComment(),ssn,Fund_Type);
 						   		 actula_val=0.0;
 						   		 actula_val_1=0.0;
 						   		 
@@ -590,7 +611,7 @@ public class Report_6_main {
 					       
 					       r6m.setLast_20_pos_nav_ret_value_sum(last_pos_nav_ret_value_sum);
 					       r6m.setLast_20_neg_nav_ret_value_sum(last_neg_nav_ret_value_sum);
-					       
+					      
 //					       ssn.update(r6m);
 					   
 					 
@@ -616,11 +637,12 @@ public class Report_6_main {
 	}
 
 
-	private static double GET_QTR_AVG_VAL(String comment, Session ssn) 
+	private static double GET_QTR_AVG_VAL(String comment, Session ssn,String Fund_Type) 
 	{
 		
 		   Criteria criteria_1 = ssn.createCriteria( Qtr_Avg.class );
 		   criteria_1.add(Restrictions.eq("quarter", comment));
+		   criteria_1.add(Restrictions.eq("Fund_Type",Fund_Type));
 		   
 //			criteria_1.setProjection( Projections.distinct(Projections.property("comment")));  		
 //	 		criteria_1.addOrder(Order.asc("end_dt"));

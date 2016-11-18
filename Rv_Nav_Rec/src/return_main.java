@@ -6,14 +6,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.criteria.Order;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import controller.Avg_ret_Model;
 import controller.nav_hist;
 import controller.nav_report_3_stable;
 
@@ -88,23 +89,61 @@ public class return_main {
 	
 	public static void main(String[] args) 
 	{
+		  ArrayList<Long> scheme_code_lst_lng = new ArrayList<Long>();
 		  ArrayList<String> scheme_code_lst = new ArrayList<String>();
 		  ArrayList<String> date_lst = new ArrayList<String>();
+		  
+		  String Fund_Type;
+		  
+		   // Type of fund is responsible for selecting appropriate scheme codes  
+//	         Fund_Type="EQUITY_ELSS"; // This field is manditory
+		  Fund_Type="EQUITY_SML"; // This field is manditory
+		  
 		  nav_hist tmp_obj=null;
 		  Session ssn=null;
-		  int ret_lst_mnths[] = {-3,-6,-12,-18,-24,-30,-36,-42,-48,-54,-60,9,12,18,24}; // list of month interval for which data need to be calculated
+		  int ret_lst_mnths[] = {-3,-6,-12,-18,-24,-30,-36,-42,-48,-54,-60,9,12,18,24,36}; // list of month interval for which data need to be calculated
 //		  int ret_lst_mnths[] = {-3}; // list of month interval for which data need to be calculated
-		  int db_flag=0;
+		  int db_flag=1;
 		  
 	  	try
 	  	{
 	  		
-	  	   LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list.txt"), "UTF-8");	  	   
-	  	   
-	  	    while (it_s.hasNext()) // if the file has lines 
-   	            {
-		    	          scheme_code_lst.add(it_s.nextLine());
-   	            }
+	  		
+	  		// EITHER YOU CAN PROVIDE SCHEME_CODE LIST (1) OR GET THAT FROM AVG_RETURN TABLE (2)
+	  		
+//	  		(1)
+//	  	   LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list_EQUITY_ELSS.txt"), "UTF-8");	
+////	  	   LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list.txt"), "UTF-8");	  	   
+//	  	   
+//	  	    while (it_s.hasNext()) // if the file has lines 
+//   	            {
+//		    	          scheme_code_lst.add(it_s.nextLine());
+//   	            }
+	  		
+	  		 ssn = HIbernateSession.getSessionFactory().openSession(); 
+			 ssn.beginTransaction();
+	  		
+//	  		(2)
+										Criteria criteria_1 = ssn.createCriteria( Avg_ret_Model.class );
+										criteria_1.setProjection( Projections.distinct(Projections.property("key.scheme_code")));
+										criteria_1.add(Restrictions.eq("key.Fund_Type", Fund_Type));
+									 	criteria_1.addOrder(org.hibernate.criterion.Order.asc("key.scheme_code"));
+											
+									 	scheme_code_lst_lng = (ArrayList<Long>) criteria_1.list();
+			 
+			 
+//			 scheme_code_lst_lng = new ArrayList<Long>();
+//			 scheme_code_lst_lng.add((long)7615);
+		 	
+		 	for(Long tmp : scheme_code_lst_lng)
+		 	{
+		 		scheme_code_lst.add(String.valueOf(tmp));
+		 	}
+		 	
+		 	System.out.println("SCHEMCODE LIST CONVERTED:----->>");
+		 	
+			 
+	  	    
 	  	  LineIterator it = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/date_list.txt"), "UTF-8"); 
 	  	   
 		  	 while(it.hasNext())
@@ -112,8 +151,7 @@ public class return_main {
 			            	date_lst.add(it.nextLine());
 		     	}
 		  	 
-		    ssn = HIbernateSession.getSessionFactory().openSession(); 
-		  	ssn.beginTransaction();
+		   
 		  	
 		  	for(String scheme_code : scheme_code_lst) //Travarsing SchemeCode List
 		  	{
@@ -147,6 +185,7 @@ public class return_main {
 		  				   obj.setNav_from_date(tmp_obj.getNav_date());
 		  				   obj.setNav_value(res);
 		  				   obj.setScheme_Code(Long.parseLong(scheme_code));
+		  				   obj.setFund_Type(Fund_Type);
 		  				   ssn.save(obj);
 		  				   db_flag++;
 		  				   
@@ -176,6 +215,7 @@ public class return_main {
 		  				   obj.setNav_from_date(tmp_obj.getNav_date());
 		  				   obj.setNav_value(res);
 		  				   obj.setScheme_Code(Long.parseLong(scheme_code));
+		  				   obj.setFund_Type(Fund_Type);
 		  				   ssn.save(obj);
 		  				   db_flag++;
 		  				   
@@ -195,7 +235,7 @@ public class return_main {
 					      ssn.clear();
 //					      ssn.getTransaction().commit();
 //					      ssn.beginTransaction();
-					      db_flag=0;
+					      db_flag=1;
 			  		 }
 		  			    
 		  		   }

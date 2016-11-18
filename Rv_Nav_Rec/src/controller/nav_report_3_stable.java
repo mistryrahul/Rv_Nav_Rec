@@ -16,7 +16,7 @@ public class nav_report_3_stable
 	  java.util.Date nav_date;
 	  double nav_value;
 	  String comment;
-	  
+	  String Fund_Type;
 	  
 	  
 	public long getId() {
@@ -54,6 +54,12 @@ public class nav_report_3_stable
 	}
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+	public String getFund_Type() {
+		return Fund_Type;
+	}
+	public void setFund_Type(String fund_Type) {
+		Fund_Type = fund_Type;
 	}
 	  
 	  

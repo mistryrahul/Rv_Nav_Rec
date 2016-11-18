@@ -19,6 +19,8 @@ private static final SessionFactory sessionFactory;
              */
             sessionFactory = new Configuration().configure().buildSessionFactory();
             
+            
+            
         } catch (Throwable e) {
             System.err.println("Error in creating SessionFactory object." 
                 + e.getMessage());

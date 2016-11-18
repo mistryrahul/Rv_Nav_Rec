@@ -8,7 +8,7 @@ public class Report_10_Model {
 
 	@EmbeddedId
 	Report_6_pk key;
-	
+		
 	double current_nav;
 	double last_50_days_avg;
 	double last_200_days_avg;
