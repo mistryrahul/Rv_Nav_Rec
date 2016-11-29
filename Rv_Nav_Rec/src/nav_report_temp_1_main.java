@@ -209,7 +209,11 @@ public class nav_report_temp_1_main
 		{
 			 // Type of fund is responsible for selecting appropriate scheme codes  
 //		    Fund_Type="EQUITY_ELSS"; // This field is mandatory //
-			 Fund_Type="EQUITY_SML"; // This field is mandatory //
+//			 Fund_Type="EQUITY_SML"; // This field is mandatory //
+//			 Fund_Type="EQUITY_LARGE_CAP_NEW_30.9.2016"; // This field is mandatory //
+//			 Fund_Type="EQUITY_MULTI_CAP_NEW_30.9.2016"; // This field is mandatory
+//			 Fund_Type="EQUITY_MID_SMALL_CAP_NEW_30.9.2016";  // has to be passed
+			 Fund_Type="EQUITY_ELSS_NEW_30.9.2016";  // has to be passed    
 			
 			
 			SessionFactory sessionfactry = new Configuration().configure().buildSessionFactory();

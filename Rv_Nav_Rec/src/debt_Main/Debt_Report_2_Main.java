@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.Query;
+
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -177,6 +179,9 @@ public class Debt_Report_2_Main {
 			    
 			    ssn.beginTransaction();
 			    
+			   	             
+			    
+			    
 			    String sql_gold="from Debt_Report_2 where Index_Name like '%GOLD%'";
 			    String sql_not_gold="from Debt_Report_2 where Index_Name not like '%GOLD%'";
 			    
@@ -239,7 +244,28 @@ public class Debt_Report_2_Main {
 			         ssn.getTransaction().commit();
 			         ssn.beginTransaction();
 			         ssn.createQuery("delete from Debt_Report_2").executeUpdate();
-			   
+			         
+			         
+			         // new added 22.11.2016
+					    
+					    Query query_1 = ssn.createQuery("update Indices_ETF_Rep_2 set star='Unrated' where aum < 100");
+			             
+			             
+			             int result_1 = query_1.executeUpdate();
+			             
+			             if (result_1 > 0) {
+			                 System.out.println("updated INDEX Unrated where aum<100");
+			             }
+			             
+			            Query query_2 = ssn.createQuery("update Gold_ETF_Rep_2 set star='Unrated' where aum < 100");
+			             
+			             
+			             int result_2 = query_2.executeUpdate();
+			             
+			             if (result_2 > 0) {
+			                 System.out.println("updated GOLD Unrated where aum<100");
+			             } 
+			             
 			         
 			         Genrate_Rank_for_Weight(ssn);
 			         
@@ -358,7 +384,7 @@ public class Debt_Report_2_Main {
 //		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
 //	    ssn.beginTransaction();
 	    
-		ArrayList<Indices_ETF_Rep_2> quarter_list = (ArrayList<Indices_ETF_Rep_2>) ssn.createQuery("from Indices_ETF_Rep_2 order by Final_Amt desc").list();
+		ArrayList<Indices_ETF_Rep_2> quarter_list = (ArrayList<Indices_ETF_Rep_2>) ssn.createQuery("from Indices_ETF_Rep_2 where star is null order by Final_Amt desc").list();
 	    
 		rank_hldr= quarter_list.size()+1;
 		
@@ -399,7 +425,7 @@ public class Debt_Report_2_Main {
 		  rank_hldr=1;
 		  same_rank_flag=0;
 	      
-		  ArrayList<Gold_ETF_Rep_2> quarter_list_1 = (ArrayList<Gold_ETF_Rep_2>) ssn.createQuery("from Gold_ETF_Rep_2 order by Final_Amt desc").list();
+		  ArrayList<Gold_ETF_Rep_2> quarter_list_1 = (ArrayList<Gold_ETF_Rep_2>) ssn.createQuery("from Gold_ETF_Rep_2 where star is null order by Final_Amt desc").list();
 		    
 			rank_hldr= quarter_list_1.size()+1;
 			
@@ -450,7 +476,7 @@ public class Debt_Report_2_Main {
         	   ssn.getTransaction().commit();
     		   ssn.beginTransaction();
     		
-	          ArrayList<Gold_ETF_Rep_2> mn_lst_rank_wise = (ArrayList<Gold_ETF_Rep_2>) ssn.createQuery("from Gold_ETF_Rep_2 order by R_Final_Amt desc").list();
+	          ArrayList<Gold_ETF_Rep_2> mn_lst_rank_wise = (ArrayList<Gold_ETF_Rep_2>) ssn.createQuery("from Gold_ETF_Rep_2 where star is null order by R_Final_Amt desc").list();
 	          
 	          tmp_size = mn_lst_rank_wise.size();
 	          
@@ -546,7 +572,7 @@ public class Debt_Report_2_Main {
         }
         else
         {
-		          ArrayList<Indices_ETF_Rep_2> mn_lst_rank_wise = (ArrayList<Indices_ETF_Rep_2>) ssn.createQuery("from Indices_ETF_Rep_2 order by R_Final_Amt desc").list();   	
+		          ArrayList<Indices_ETF_Rep_2> mn_lst_rank_wise = (ArrayList<Indices_ETF_Rep_2>) ssn.createQuery("from Indices_ETF_Rep_2 where star is null order by R_Final_Amt desc").list();   	
 		        
 		       
 		        tmp_size = mn_lst_rank_wise.size();

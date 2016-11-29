@@ -472,7 +472,7 @@ public class avg_return_2_main {
 		double res = (((Ob2.getAdjnavrs() - Ob1.getAdjnavrs()) / Ob1.getAdjnavrs())*100);
 		
 		
-		Avg_ret_Model tmp_ob = new Avg_ret_Model();
+//		Avg_ret_Model tmp_ob = new Avg_ret_Model();
 		
 		composite_pk_avg_re_model ob_pk = new composite_pk_avg_re_model();
 		ob_pk.setScheme_code(sch_code);
@@ -556,17 +556,21 @@ public class avg_return_2_main {
 	 {
 		    //  ***** SELECT THE TYPE OF FUND  ***** 
 //		     Fund_Type="EQUITY_ELSS";  // has to be passed
-		     Fund_Type="EQUITY_SML";  // has to be passed
+//		     Fund_Type="EQUITY_LARGE_CAP_NEW_30.9.2016";  // has to be passed
+//		     Fund_Type="EQUITY_MULTI_CAP_NEW_30.9.2016";  // has to be passed
+//		     Fund_Type="EQUITY_MID_SMALL_CAP_NEW_30.9.2016";  // has to be passed
+		     Fund_Type="EQUITY_ELSS_NEW_30.9.2016";  // has to be passed    
 		 
 		  	List<Long> oo = new ArrayList<Long>();
 		  	
-//	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list_EQUITY_ELSS.txt"), "UTF-8");
-	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/SML_scheme_code_list.txt"), "UTF-8");		  	
-//	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list.txt"), "UTF-8");	  	   
+		  	List<Long> temp_schem_code = new ArrayList<Long>();
+		  			  	
+		  	LineIterator it_s = FileUtils.lineIterator(new File("/home/rv/Desktop/files_to_upload/scheme_code_list_EQUITY_ELSS_NEW.txt"), "UTF-8");	  	
+
 		  	   
 	 while (it_s.hasNext()) // if the file has lines 
    	            {
-		                 oo.add(Long.parseLong(it_s.nextLine()));
+		               temp_schem_code.add(Long.parseLong(it_s.nextLine()));
    	            }		
 	 
 	  System.out.println("File loaded Successfullyy-----");
@@ -582,13 +586,17 @@ public class avg_return_2_main {
 	  //NEW ADDED
 	  // OMITING SCHEME_CODE WHICH ARE CLOSE ENDED
 	  
-	  for(int indx=0;indx<oo.size();indx++)
+	  for(int indx=0;indx<temp_schem_code.size();indx++)
 	  {
-		  ArrayList<Scheme_Detail> schm_dtl = (ArrayList<Scheme_Detail>) ssn.createQuery("from Scheme_Detail where scheme_code=? and TYPE_CODE!=2").setLong(0, oo.get(indx)).list();
+		  ArrayList<Scheme_Detail> schm_dtl = (ArrayList<Scheme_Detail>) ssn.createQuery("from Scheme_Detail where scheme_code=? and TYPE_CODE!=2").setLong(0, temp_schem_code.get(indx)).list();
 		    
 		    if(schm_dtl.size()==0)
 		    {
-		    	oo.remove(indx);
+//		    	oo.remove(indx);
+		    }
+		    else
+		    {
+		    	oo.add(temp_schem_code.get(indx));
 		    }
 		   
 	  }
@@ -637,16 +645,11 @@ public class avg_return_2_main {
 					       	   System.out.println("No record Exist in NAv_Hist of Scheme COde-->"+ob);
 					       	   continue;
 					        }
-    	
-//		  		   i=0; // Reseting Value to 0
-		  		    
-	    	 
+					    	
+//		  		   i=0; // Reseting Value to 0	    	 
 //	    	List<java.util.Date> dt_lst = new ArrayList<Date>();
 ////	    	      
-//	    	dt_lst.add(new java.util.Date(101,11,31));
-	    	
-	    	       
-	    	       
+//	    	dt_lst.add(new java.util.Date(101,11,31));	       
 	    	         date_tmp = dt_lst.get(0);
 			  		 
 	    	         
@@ -693,6 +696,8 @@ public class avg_return_2_main {
 				                
 				                    if(tmp_obj_met==null)
 				                    {
+				                    	//call a method 
+				                    	Save_Last_Quarter_Value(date_tmp,ddd,ob,Fund_Type,ssn);				                    	
 				                    	break;
 				                    }
 				                    else
@@ -767,6 +772,58 @@ public class avg_return_2_main {
 
 	}
 
+	private static void Save_Last_Quarter_Value(Date from_date ,Date to_date, long scheme_code, String Fund_Type ,Session ssn) 
+	{
+	   
+		composite_pk_avg_re_model ob_pk = new composite_pk_avg_re_model();
+		ob_pk.setScheme_code(scheme_code);
+		ob_pk.setStart_dt(from_date);
+		ob_pk.setFund_Type(Fund_Type);
+		
+		Avg_ret_Model ob_tmp =new Avg_ret_Model();
+		ob_tmp.setKey(ob_pk);
+		ob_tmp.setNav_val(0.000);
+		ob_tmp.setEnd_dt(to_date);
+	   
+		
+		if((from_date.getMonth()==00 || from_date.getMonth()==11) && (to_date.getMonth()==2 || to_date.getMonth()==1))
+		{
+			ob_tmp.setComment("Q1_"+( to_date.getYear()-100));	
+		}
+		else if((from_date.getMonth()==02 || from_date.getMonth()==03) && (to_date.getMonth()==4 || to_date.getMonth()==5)) 
+//			if(Ob2.getNav_date().getMonth()==5 || Ob2.getNav_date().getMonth()==4 || Ob2.getNav_date().getMonth()==6)
+		{
+			ob_tmp.setComment("Q2_"+( to_date.getYear()-100));	
+		}
+		else if((from_date.getMonth()==06 || from_date.getMonth()==05) && (to_date.getMonth()==8 || to_date.getMonth()==7))
+//		else if(Ob2.getNav_date().getMonth()==8 || Ob2.getNav_date().getMonth()==7 || Ob2.getNav_date().getMonth()==9)
+		{
+			ob_tmp.setComment("Q3_"+( to_date.getYear()-100));	
+		}
+		else if((from_date.getMonth()==9 || from_date.getMonth()==8) && (to_date.getMonth()==11 || to_date.getMonth()==0))
+//		else if(Ob2.getNav_date().getMonth()==11 || Ob2.getNav_date().getMonth()==10 || Ob2.getNav_date().getMonth()==12)
+		{
+			ob_tmp.setComment("Q4_"+( to_date.getYear()-100));	
+		}
+		else
+		{
+//			System.out.println("<---Unknown Quarter--->"); 
+//			System.out.println("Date-->"+Ob2.getNav_date());
+//			System.out.println("Date-->"+Ob2.getNav_date());
+//			System.out.println(Ob2.getNav_date().getMonth());
+			System.exit(0);
+		}
+		
+		
+		
+		
+		ssn.save(ob_tmp); 
+		ssn.getTransaction().commit();
+		ssn.beginTransaction();
+		
+	}
+
+
 	private static nav_hist Fill_Blanks(Date ddd, long ob, Date date_tmp,
 			List<nav_hist> nav_hst_lst, Session ssn) throws ParseException {
 	       ArrayList<java.util.Date> date_holder = new ArrayList<Date>();
@@ -782,19 +839,14 @@ public class avg_return_2_main {
 		   
 		   nav_hist tmp_obj_ret=null;
 		   
-		   
-//		   Session ssn=null;
+		   //		   Session ssn=null;
 //		   ssn = HIbernateSession.getSessionFactory().openSession(); 
 		 
 //		   if(ssn.getTransaction()==null)
 //		   {
 //			   ssn.beginTransaction();   
 //		   }
-		   
-		   
-		   
-		   
-		 
+		   	   
 	       date_holder.add(ddd);
 	       
 	       while(nav_hst_lst.size()<=0 && qtr_chker<5)
@@ -886,8 +938,9 @@ public class avg_return_2_main {
 	          if(rec_found_flag==1)
 	          {
 	        	  
-	        	 System.out.println("ID OF NEWLY CREATED OBJECT--->>"+first_obj_id_hldr_tmp); 
-		        nav_hist tmp_obj = (nav_hist) ssn.createQuery("from nav_hist_full where id="+first_obj_id_hldr_tmp).list().get(0);
+	        	System.out.println("ID OF NEWLY CREATED OBJECT--->>"+first_obj_id_hldr_tmp); 
+		        
+	        	nav_hist tmp_obj = (nav_hist) ssn.createQuery("from nav_hist_full where id="+first_obj_id_hldr_tmp).list().get(0);
 	            nav_hst_lst.clear();
 	            nav_hst_lst.add(tmp_obj);
 	            date_tmp=tmp_obj.getNav_date();

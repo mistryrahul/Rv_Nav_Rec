@@ -49,14 +49,15 @@ public class Report_10_Main {
 //		java.util.Date dd_200=null;
 		
 		
-		
-		
+				
 		// Type of fund is responsible for selecting appropriate scheme codes  
 //	    Fund_Type="EQUITY_ELSS"; // This field is mandatory //
-		Fund_Type="EQUITY_SML"; // This field is mandatory //
-	    
-	    
+//		Fund_Type="EQUITY_SML"; // This field is mandatory //
+//		Fund_Type="EQUITY_LARGE_CAP_NEW_30.9.2016"; // This field is mandatory //
+//		Fund_Type="EQUITY_MULTI_CAP_NEW_30.9.2016"; // This field is mandatory 
+//		 Fund_Type="EQUITY_MID_SMALL_CAP_NEW_30.9.2016";  // has to be passed
 		
+		 Fund_Type="EQUITY_ELSS_NEW_30.9.2016"; 
 		
 //		 Calendar cal_1 = Calendar.getInstance();
 //		 Calendar cal_2 = Calendar.getInstance();
@@ -69,7 +70,7 @@ public class Report_10_Main {
 			    
 //			   ArrayList<Custom_Merged_Report_W_Rank> quarter_list = (ArrayList<Custom_Merged_Report_W_Rank>) ssn.createQuery("from Custom_Merged_Report_W_Rank order by scheme_code").list();
               
-			   ArrayList<Avg_ret_Model> quarter_list = (ArrayList<Avg_ret_Model>) ssn.createQuery("from avg_return where key.Fund_Type='"+Fund_Type+"' and scheme_code=7615 order by scheme_code").list();
+			   ArrayList<Avg_ret_Model> quarter_list = (ArrayList<Avg_ret_Model>) ssn.createQuery("from avg_return where key.Fund_Type='"+Fund_Type+"'order by scheme_code").list();
 			   
 			   
 			   

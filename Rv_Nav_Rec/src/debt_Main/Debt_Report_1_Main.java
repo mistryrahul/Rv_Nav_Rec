@@ -14,6 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import controller.ExpenceRatio;
+import controller.Mf_portfolio_New;
 import controller.Scheme_Aum;
 import controller.Scheme_Paum;
 import controller.nav_hist;
@@ -213,14 +214,22 @@ public class Debt_Report_1_Main
 			    	 {
 			    		 ob1.setEx_ratio(e_rat.get(0).getEx_ratio());
                 	 }
-			  
-			    	 ArrayList<Scheme_Paum> sch_aum = (ArrayList<Scheme_Paum>) ssn.createQuery("from Scheme_Paum where scheme_code=? and day=?").setLong(0, crsg.getScheme_code()).setDate(1,crsg.getInv_date()).list(); 
+
+                     ArrayList<Mf_portfolio_New> sch_aum_mf_prtflio = (ArrayList<Mf_portfolio_New>) ssn.createQuery("from Mf_portfolio_New where scheme_code=? and invdate=?").setLong(0, crsg.getScheme_code()).setDate(1,crsg.getInv_date()).setMaxResults(1).list();
 			    	 
-			    	 if(sch_aum.size()>0)
+			    	 if(sch_aum_mf_prtflio.size()>0)
 			    	 {
-			    		 ob1.setAum(sch_aum.get(0).getAvg_aum()/100); // cause it is in lakhs, we need that in crores
+			    		 ob1.setAum(sch_aum_mf_prtflio.get(0).getAum()/100); // cause it is in lakhs, we need that in crores
 			    		 
                 	 }
+			    	 
+//			    	 // Previous AUM- 
+//			    	 ArrayList<Scheme_Paum> sch_aum = (ArrayList<Scheme_Paum>) ssn.createQuery("from Scheme_Paum where scheme_code=? and day=?").setLong(0, crsg.getScheme_code()).setDate(1,crsg.getInv_date()).list(); 
+//			    	 if(sch_aum.size()>0)
+//			    	 {
+//			    		 ob1.setAum(sch_aum.get(0).getAvg_aum()/100); // cause it is in lakhs, we need that in crores
+//			    		 
+//                	 }
 			    	 
 			    	 
 			    	 
@@ -263,8 +272,18 @@ public class Debt_Report_1_Main
 		             int result = query.executeUpdate();
 		              
 		             if (result > 0) {
-		                 System.out.println("Returns with ) are removed");
+		                 System.out.println("36 Months Returns which are 0 and aum < 100  are removed");
 		             }
+		             
+		             Query query_1 = ssn.createQuery("update Debt_Report_1 set star='Unrated' where aum < 100");
+		             
+		             		             
+		             int result_1 = query_1.executeUpdate();
+		             
+		             if (result_1 > 0) {
+		                 System.out.println("all aum below 100 crore updated as unrated");
+		             }
+		             
 		             
 		             ssn.getTransaction().commit();
 		             
@@ -278,7 +297,7 @@ public class Debt_Report_1_Main
 //                      ssn = HIbernateSession.getSessionFactory().openSession(); 
 //		              ssn.beginTransaction();
 		              
-		              ArrayList<Debt_Report_1> mn_lst_totl = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1").list();
+		              ArrayList<Debt_Report_1> mn_lst_totl = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 where star is null").list();
                      
                        for(Debt_Report_1 ob : mn_lst_totl)
                        {
@@ -323,7 +342,7 @@ public class Debt_Report_1_Main
 //		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
 //        ssn.beginTransaction();
         
-        ArrayList<Debt_Report_1> mn_lst_rank_wise = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by rank_of_weight_to_ranks desc").list();
+        ArrayList<Debt_Report_1> mn_lst_rank_wise = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 where star is null order by rank_of_weight_to_ranks desc").list();
         tmp_size = mn_lst_rank_wise.size();
         
         top_grp_1=(int) Math.round(tmp_size*.10);
@@ -435,7 +454,7 @@ public class Debt_Report_1_Main
 //		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
 //	    ssn.beginTransaction();
 	    
-		ArrayList<Debt_Report_1> quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by weight_to_ranks desc").list();
+		ArrayList<Debt_Report_1> quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 where star is null order by weight_to_ranks desc").list();
 	    
 		rank_hldr= quarter_list.size()+1;
 		
@@ -492,14 +511,20 @@ public class Debt_Report_1_Main
 	    {
 	    	if(colmn.equals("modified_duration"))
 	    	{
-	    		  quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by "+colmn+" desc").list();
+	    		  quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 where star is null order by "+colmn+" desc").list();
 	    		  rank_hldr=0;  
 	    	}
 	    	else
 	    	{
-	    		quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 order by "+colmn+" desc").list();
+	    		quarter_list = (ArrayList<Debt_Report_1>) ssn.createQuery("from Debt_Report_1 where star is null order by "+colmn+" desc").list();
 	    		rank_hldr=quarter_list.size()+1;
 	    	}
+	    	
+	    	
+//	    	System.out.println("<<<<<<<<<--------LIST SIZE----------------->>>>>>>>>>>>>>>>>>>>");
+//    	    System.out.println(quarter_list.size());
+//    	    System.out.println("<<<<<<<<<--------LIST SIZE END----------->>>>>>>>>>>>>>>>>>>>");
+	    	
 	    	
 	    	   temp_val_hldr=-999999;
 //   	    	   rank_hldr=0;

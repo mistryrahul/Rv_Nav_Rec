@@ -37,10 +37,12 @@ public class Report_6_main {
 		    
 			// Type of fund is responsible for selecting appropriate scheme codes  
 //	        Fund_Type="EQUITY_ELSS"; // This field is manditory //
-		    Fund_Type="EQUITY_SML"; // This field is manditory //
+//		    Fund_Type="EQUITY_SML"; // This field is manditory //
+//		    Fund_Type="EQUITY_LARGE_CAP_NEW_30.9.2016"; // This field is mandatory // 
+//		    Fund_Type="EQUITY_MULTI_CAP_NEW_30.9.2016"; // This field is mandatory 
+//  		Fund_Type="EQUITY_MID_SMALL_CAP_NEW_30.9.2016";  // has to be passed
 	        
-	        
-	        
+		    Fund_Type="EQUITY_ELSS_NEW_30.9.2016";  // has to be passed 
 //		    
 //	        Criteria criteria_1 = ssn.createCriteria( Avg_ret_Model.class );
 //			criteria_1.setProjection( Projections.distinct(Projections.property("comment")));  		

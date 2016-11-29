@@ -50,6 +50,21 @@ public class Report_Merged_5_6_8_Model
    double last_16_pos_avg_cat_ret_otb;
    double last_20_pos_avg_cat_ret_otb;
    
+   // new added on 21.10.2016
+   
+   double last_4_neg_act_ret_sum;
+   double last_8_neg_act_ret_sum;
+   double last_12_neg_act_ret_sum;
+   double last_16_neg_act_ret_sum;
+   double last_20_neg_act_ret_sum;
+   
+   double last_4_pos_act_ret_sum;
+   double last_8_pos_act_ret_sum;
+   double last_12_pos_act_ret_sum;
+   double last_16_pos_act_ret_sum;
+   double last_20_pos_act_ret_sum;
+
+   
    //Report 8 
    
    double cri;
@@ -422,13 +437,85 @@ public void setForwar_36_mnths(double forwar_36_mnths) {
 	this.forwar_36_mnths = forwar_36_mnths;
 }
 
+public double getLast_4_neg_act_ret_sum() {
+	return last_4_neg_act_ret_sum;
+}
+
+public void setLast_4_neg_act_ret_sum(double last_4_neg_act_ret_sum) {
+	this.last_4_neg_act_ret_sum = last_4_neg_act_ret_sum;
+}
+
+public double getLast_8_neg_act_ret_sum() {
+	return last_8_neg_act_ret_sum;
+}
+
+public void setLast_8_neg_act_ret_sum(double last_8_neg_act_ret_sum) {
+	this.last_8_neg_act_ret_sum = last_8_neg_act_ret_sum;
+}
+
+public double getLast_12_neg_act_ret_sum() {
+	return last_12_neg_act_ret_sum;
+}
+
+public void setLast_12_neg_act_ret_sum(double last_12_neg_act_ret_sum) {
+	this.last_12_neg_act_ret_sum = last_12_neg_act_ret_sum;
+}
+
+public double getLast_16_neg_act_ret_sum() {
+	return last_16_neg_act_ret_sum;
+}
+
+public void setLast_16_neg_act_ret_sum(double last_16_neg_act_ret_sum) {
+	this.last_16_neg_act_ret_sum = last_16_neg_act_ret_sum;
+}
+
+public double getLast_20_neg_act_ret_sum() {
+	return last_20_neg_act_ret_sum;
+}
+
+public void setLast_20_neg_act_ret_sum(double last_20_neg_act_ret_sum) {
+	this.last_20_neg_act_ret_sum = last_20_neg_act_ret_sum;
+}
+
+public double getLast_4_pos_act_ret_sum() {
+	return last_4_pos_act_ret_sum;
+}
+
+public void setLast_4_pos_act_ret_sum(double last_4_pos_act_ret_sum) {
+	this.last_4_pos_act_ret_sum = last_4_pos_act_ret_sum;
+}
+
+public double getLast_8_pos_act_ret_sum() {
+	return last_8_pos_act_ret_sum;
+}
+
+public void setLast_8_pos_act_ret_sum(double last_8_pos_act_ret_sum) {
+	this.last_8_pos_act_ret_sum = last_8_pos_act_ret_sum;
+}
+
+public double getLast_12_pos_act_ret_sum() {
+	return last_12_pos_act_ret_sum;
+}
+
+public void setLast_12_pos_act_ret_sum(double last_12_pos_act_ret_sum) {
+	this.last_12_pos_act_ret_sum = last_12_pos_act_ret_sum;
+}
+
+public double getLast_16_pos_act_ret_sum() {
+	return last_16_pos_act_ret_sum;
+}
+
+public void setLast_16_pos_act_ret_sum(double last_16_pos_act_ret_sum) {
+	this.last_16_pos_act_ret_sum = last_16_pos_act_ret_sum;
+}
+
+public double getLast_20_pos_act_ret_sum() {
+	return last_20_pos_act_ret_sum;
+}
+
+public void setLast_20_pos_act_ret_sum(double last_20_pos_act_ret_sum) {
+	this.last_20_pos_act_ret_sum = last_20_pos_act_ret_sum;
+}
  
-
-
-
-   
-   
-   
-   
    
 }

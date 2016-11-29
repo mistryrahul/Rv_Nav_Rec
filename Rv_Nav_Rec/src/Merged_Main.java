@@ -43,8 +43,12 @@ public class Merged_Main {
 		
 	     // Type of fund is responsible for selecting appropriate scheme codes  
 //         Fund_Type="EQUITY_ELSS"; // This field is mandatory
-		 Fund_Type="EQUITY_SML"; // This field is mandatory
-		 
+//		   Fund_Type="EQUITY_SML"; // This field is mandatory
+//		   Fund_Type="EQUITY_LARGE_CAP_NEW_30.9.2016"; // This field is mandatory
+//		   Fund_Type="EQUITY_MULTI_CAP_NEW_30.9.2016"; // This field is mandatory
+//		   Fund_Type="EQUITY_MID_SMALL_CAP_NEW_30.9.2016";  // has to be passed
+		   Fund_Type="EQUITY_ELSS_NEW_30.9.2016";
+		  
 		  
 		                                                //         // If required to done MANUALY for some scheme_Code  
 														//		  ArrayList<Long> scheme_code_list_temp = new ArrayList<Long>();
@@ -155,6 +159,23 @@ public class Merged_Main {
 						    
 						    rm568.setLast_20_neg_avg_cat_ret_otb(report_6_lst.get(0).getLast_20_neg_avg_cat_ret_obt());
 						    rm568.setLast_20_pos_avg_cat_ret_otb(report_6_lst.get(0).getLast_20_pos_avg_cat_ret_obt());
+						    
+						    //new added 
+						    
+						    rm568.setLast_4_neg_act_ret_sum(report_6_lst.get(0).getLast_4_neg_act_ret_sum());
+						    rm568.setLast_4_pos_act_ret_sum(report_6_lst.get(0).getLast_4_pos_act_ret_sum());
+						    
+						    rm568.setLast_8_neg_act_ret_sum(report_6_lst.get(0).getLast_8_neg_act_ret_sum());
+						    rm568.setLast_8_pos_act_ret_sum(report_6_lst.get(0).getLast_8_pos_act_ret_sum());
+						    
+						    rm568.setLast_12_neg_act_ret_sum(report_6_lst.get(0).getLast_12_neg_act_ret_sum());
+						    rm568.setLast_12_pos_act_ret_sum(report_6_lst.get(0).getLast_12_pos_act_ret_sum());
+						    
+						    rm568.setLast_16_neg_act_ret_sum(report_6_lst.get(0).getLast_16_neg_act_ret_sum());
+						    rm568.setLast_16_pos_act_ret_sum(report_6_lst.get(0).getLast_16_pos_act_ret_sum());
+						    
+						    rm568.setLast_20_neg_act_ret_sum(report_6_lst.get(0).getLast_20_neg_act_ret_sum());
+						    rm568.setLast_20_pos_act_ret_sum(report_6_lst.get(0).getLast_20_pos_act_ret_sum());
 						    
 						   
 					   }
@@ -267,6 +288,7 @@ public class Merged_Main {
 				    
 				    
 //				    *******
+				    //DONE
 				    // need to DONE (if any data does not exist, check with its PRIMARY_FD_CODE in the portfolio table)
 				    // FETCHING AUM FROM MF_PORTFOLIO
 				    

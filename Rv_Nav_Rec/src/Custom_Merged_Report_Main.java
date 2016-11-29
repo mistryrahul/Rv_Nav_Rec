@@ -23,12 +23,17 @@ public class Custom_Merged_Report_Main {
 		try
 		{     
 			 
-		String colum_lst[] = {"backward_6","backward_12","backward_18","backward_24","backward_30","backward_36","backward_42","backward_48","backward_54","backward_60","forwar_9_mnths","forwar_12_mnths","forwar_18_mnths","forwar_36_mnths","last_4_neg_avg_cat_ret_otb","last_4_pos_avg_cat_ret_otb","last_8_neg_avg_cat_ret_otb","last_8_pos_avg_cat_ret_otb","last_12_neg_avg_cat_ret_otb","last_12_pos_avg_cat_ret_otb","last_16_neg_avg_cat_ret_otb","last_16_pos_avg_cat_ret_otb", "last_20_neg_avg_cat_ret_otb" , "last_20_pos_avg_cat_ret_otb","cri","no_of_stock","year_1_1","year_1_2","year_1_3","year_1_4","max_Drawdown_year_1","max_Drawdown_year_2","max_Drawdown_year_3","max_Drawdown_year_4","max_Drawdown_year_5","avg_return_50_minus_200","last_200_day_return"};
+//		String colum_lst[] = {"backward_6","backward_12","backward_18","backward_24","backward_30","backward_36","backward_42","backward_48","backward_54","backward_60","forwar_9_mnths","forwar_12_mnths","forwar_18_mnths","forwar_36_mnths","last_4_neg_avg_cat_ret_otb","last_4_pos_avg_cat_ret_otb","last_8_neg_avg_cat_ret_otb","last_8_pos_avg_cat_ret_otb","last_12_neg_avg_cat_ret_otb","last_12_pos_avg_cat_ret_otb","last_16_neg_avg_cat_ret_otb","last_16_pos_avg_cat_ret_otb", "last_20_neg_avg_cat_ret_otb" , "last_20_pos_avg_cat_ret_otb","cri","no_of_stock","year_1_1","year_1_2","year_1_3","year_1_4","max_Drawdown_year_1","max_Drawdown_year_2","max_Drawdown_year_3","max_Drawdown_year_4","max_Drawdown_year_5","avg_return_50_minus_200","last_200_day_return"};
 
+			String colum_lst[] = {"backward_6","backward_12","backward_18","backward_24","backward_30","backward_36","backward_42","backward_48","backward_54","backward_60","forwar_9_mnths","forwar_12_mnths","forwar_18_mnths","forwar_36_mnths","last_4_neg_avg_cat_ret_otb","last_4_pos_avg_cat_ret_otb","last_8_neg_avg_cat_ret_otb","last_8_pos_avg_cat_ret_otb","last_12_neg_avg_cat_ret_otb","last_12_pos_avg_cat_ret_otb","last_16_neg_avg_cat_ret_otb","last_16_pos_avg_cat_ret_otb", "last_20_neg_avg_cat_ret_otb" , "last_20_pos_avg_cat_ret_otb","last_4_neg_act_ret_sum","last_8_neg_act_ret_sum","last_12_neg_act_ret_sum","last_16_neg_act_ret_sum","last_20_neg_act_ret_sum","last_4_pos_act_ret_sum","last_8_pos_act_ret_sum","last_12_pos_act_ret_sum","last_16_pos_act_ret_sum","last_20_pos_act_ret_sum","cri","no_of_stock","year_1_1","year_1_2","year_1_3","year_1_4","max_Drawdown_year_1","max_Drawdown_year_2","max_Drawdown_year_3","max_Drawdown_year_4","max_Drawdown_year_5","avg_return_50_minus_200","last_200_day_return"};		 
+			
 		 // Type of fund is responsible for selecting appropriate scheme codes  
 //        Fund_Type="EQUITY_ELSS"; // This field is mandatory
-		Fund_Type="EQUITY_LARGE_CAP_NEW"; // This field is mandatory
-		
+//		  Fund_Type="Report_Merged_5_6_8_Model"; // This field is mandatory
+//		  Fund_Type="EQUITY_MULTI_CAP_NEW_30.9.2016"; // This field is mandatory 
+//		  Fund_Type="EQUITY_MID_SMALL_CAP_NEW_30.9.2016";  // has to be passed
+		  Fund_Type="EQUITY_ELSS_NEW_30.9.2016";	
+		  
 		Session ssn = HIbernateSession.getSessionFactory().openSession(); 
 	    ssn.beginTransaction();		
 	    
@@ -735,7 +740,269 @@ public class Custom_Merged_Report_Main {
 			 		    	
 			 		    	temp_val_hldr=arm.getLast_20_pos_avg_cat_ret_otb();
 	    			   }
+	    			   //new added 
 	    			   
+	    			   if(column=="last_4_neg_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_4_neg_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_4_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_4_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_4_neg_act_ret_sum();
+	    			   }
+	    			   
+	    			   if(column=="last_8_neg_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_8_neg_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_8_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_8_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_8_neg_act_ret_sum();
+	    			   }
+	    			   
+	    			   if(column=="last_12_neg_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_12_neg_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_12_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_12_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_12_neg_act_ret_sum();
+	    			   }
+	    			   
+	    			   if(column=="last_16_neg_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_16_neg_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_16_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_16_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_16_neg_act_ret_sum();
+	    			   }
+	    			   
+	    			   
+	    			   if(column=="last_20_neg_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_20_neg_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_20_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_20_neg_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_20_neg_act_ret_sum();
+	    			   }
+	    			   
+	    			   
+	    			   if(column=="last_4_pos_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_4_pos_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_4_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_4_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_4_pos_act_ret_sum();
+	    			   }
+	    			   
+	    			   if(column=="last_8_pos_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_8_pos_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_8_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_8_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_8_pos_act_ret_sum();
+	    			   }
+	    			   
+	    			   if(column=="last_12_pos_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_12_pos_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_12_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_12_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_12_pos_act_ret_sum();
+	    			   }
+	    			   
+	    			   if(column=="last_16_pos_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_16_pos_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_16_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_16_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_16_pos_act_ret_sum();
+	    			   }
+	    			   
+	    			   if(column=="last_20_pos_act_ret_sum")
+	    			   {
+		    			   retval = Double.compare(temp_val_hldr,arm.getLast_20_pos_act_ret_sum());
+		  		 		    
+			 		    	if(retval==0)
+			 		    	{
+			 		    	    arm.setR_last_20_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	    db_flag++;
+			 		    	    same_rank_flag++;
+			 		    	}
+			 		    	else
+			 		    	{   
+			 		    		rank_hldr=rank_hldr+same_rank_flag;
+					    		same_rank_flag=0;
+					    		rank_hldr=rank_hldr+1;
+					    		
+			 		    		arm.setR_last_20_pos_act_ret_sum(rank_hldr);
+			 		    	    ssn.update(arm);
+			 		    	     db_flag++;  
+			 		    	}
+			 		    	
+			 		    	
+			 		    	temp_val_hldr=arm.getLast_20_pos_act_ret_sum();
+	    			   }
 //	    			   max_Drawdown_year_1
 	    			   
 	    			   if(column=="max_Drawdown_year_1")
